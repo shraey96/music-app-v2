@@ -1,0 +1,33 @@
+.sidebar {
+  box-shadow: 0px 3px 46px #00000029;
+  width: 240px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  padding: 20px 0;
+  &__items-container {
+    height: 100%;
+  }
+  &__section {
+    margin-bottom: 20px;
+    cursor: pointer;
+    &__label {
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 8px;
+      padding-left: 20px;
+    }
+    &__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 8px;
+      margin-bottom: 8px;
+      padding-left: 28px;
+      &:hover {
+        background-color: pink;
+      }
+    }
+  }
+}

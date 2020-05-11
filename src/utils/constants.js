@@ -1,14 +1,33 @@
-export const SIDEBAR_ITEMS = [
-  {
-    label: "Playlists",
-    value: "playlist"
+export const SIDEBAR_ITEMS = {
+  section1: {
+    label: "Music",
+    items: [
+      {
+        label: "Playlists",
+        value: "playlist",
+      },
+      {
+        label: "Likes",
+        value: "likes",
+      },
+      {
+        label: "Discover",
+        value: "discover",
+      },
+    ],
   },
-  {
-    label: "Likes",
-    value: "likes"
+  section2: {
+    label: "Music Services",
+    isServiceConnector: true,
+    items: [
+      {
+        label: "Spotify",
+        value: "spotify",
+      },
+      {
+        label: "Soundcloud",
+        value: "Soundcloud",
+      },
+    ],
   },
-  {
-    label: "Discover",
-    value: "discover"
-  }
-]
+}

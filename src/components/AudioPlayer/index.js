@@ -92,6 +92,7 @@ class AudioPlayer extends React.Component {
 
   getUserTracks = async () => {
     const tracks = await getSPPlaylistTracks()
+
     if (tracks) {
       this.setState({
         spotifyLikes: Object.values(tracks),
