@@ -7,7 +7,7 @@ import "./style.scss"
 
 export const Sidebar = () => {
   const userInfo = useSelector((state) => state.user.userInfo)
-  console.log(userInfo)
+
   return (
     <div className={`sidebar sidebar--hide`}>
       <div className="sidebar__items-container">

@@ -1,16 +1,29 @@
-import React, { useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Switch, Route, withRouter } from "react-router-dom"
 
 import { AudioPlayer, Sidebar } from "components"
 
-import { SPOTIFY_LOGIN_LINK } from "utils/spotifyHelpers"
+import {
+  checkSpotifyToken,
+  setSpotifyAccessToken,
+  SPOTIFY_LOGIN_LINK,
+} from "utils/spotifyHelpers"
 
 import "./style.scss"
 
 const Home = (props) => {
+  const [tokenLoader, setTokenLoader] = useState(true)
+
   useEffect(() => {
-    props.history.push("/home/spotify")
+    const { userInfo } = props.userStore
+    if (userInfo.services.includes("spotify")) {
+      const token = checkSpotifyToken()
+      setSpotifyAccessToken(token)
+    }
+    setTokenLoader(false)
   }, [])
+
+  if (tokenLoader) return <></>
 
   return (
     <>
@@ -19,10 +32,10 @@ const Home = (props) => {
       <div className="music-app-home">
         <div className="music-app-home__container">
           <a href={SPOTIFY_LOGIN_LINK}>Login Spotify</a>
-
+          <AudioPlayer />
           <Switch>
             <Route exact path="/home/spotify/:section?">
-              <AudioPlayer />
+              <p>Spotify</p>
             </Route>
             <Route exact path="/home/soundcloud/:section?">
               <p>Soundcloud</p>

@@ -8,6 +8,8 @@ const Login = React.lazy(() => import("pages/Login"))
 
 const Home = React.lazy(() => import("pages/Home"))
 
+const Callback = React.lazy(() => import("pages/Callback"))
+
 const App = (props) => {
   const [loader, toggleLoader] = useState(false)
 
@@ -17,7 +19,7 @@ const App = (props) => {
   const isUserAuthAndServices = userStore.userAuth
 
   if (isUserAuthAndServices && !props.location.pathname.includes("/home")) {
-    props.history.push("/home")
+    // props.history.push("/home")
   }
   return (
     <div className="music-app-container">
@@ -26,9 +28,12 @@ const App = (props) => {
           <Login />
         ) : (
           <Route exact path="/home/:service?/:section?">
-            <Home />
+            <Home userStore={userStore} />
           </Route>
         )}
+        <Route exact path="/callback/:service">
+          <Callback />
+        </Route>
       </Suspense>
     </div>
   )

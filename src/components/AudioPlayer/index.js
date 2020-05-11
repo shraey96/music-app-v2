@@ -1,16 +1,15 @@
 import React from "react"
 import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
+import { BroadcastChannel } from "broadcast-channel"
+
+import { TrackItem } from "components"
 
 import { playTrack, toggleAudioPlay } from "redux-app/actions"
 
-import { getQueryParams } from "utils/helpers"
-import {
-  getSpotifyToken,
-  getSPPlaylistTracks,
-  setSpotifyTokenHeader,
-  playSpotifyTrack,
-} from "utils/spotifyHelpers"
+import { getSPPlaylistTracks, playSpotifyTrack } from "utils/spotifyHelpers"
+
+import "./style.scss"
 
 class AudioPlayer extends React.Component {
   constructor() {
@@ -25,24 +24,15 @@ class AudioPlayer extends React.Component {
       localStorage.getItem("spotify_creds") || false
     )
 
-    if (storageSpotifyToken === "undefined" || !storageSpotifyToken) {
-      const spotifyCode = getQueryParams(window.location.href, "code")
-      if (spotifyCode) {
-        await getSpotifyToken(spotifyCode)
-        this.props.history.push("/")
-      }
-    }
-    const { spotify_access_token } = storageSpotifyToken
-    this.spotifyToken = spotify_access_token
-    setSpotifyTokenHeader(spotify_access_token)
+    const { access_token } = storageSpotifyToken
+
+    this.spotifyToken = access_token
     this.bindSpotifyPlayer()
     this.getUserTracks()
   }
 
   bindSpotifyPlayer = () => {
-    console.log("bindSpotifyPlayer")
     window.onSpotifyWebPlaybackSDKReady = () => {
-      // You can now initialize Spotify.Player and use the SDK
       this.spotifyPlayer = new window.Spotify.Player({
         name: "Spotify Now's App",
         getOAuthToken: (cb) => {
@@ -71,6 +61,7 @@ class AudioPlayer extends React.Component {
           trackPayload: {
             service: "spotify",
             trackId: trackState.track_window.current_track.id,
+            trackInfo: trackState.track_window.current_track,
           },
         })
       })
@@ -85,8 +76,16 @@ class AudioPlayer extends React.Component {
         console.log("Device ID has gone offline", device_id)
       })
 
-      // Connect to the player!
       this.spotifyPlayer.connect()
+
+      const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
+      spotifyChannel.onmessage = (msg) => {
+        console.log(111, msg)
+        playSpotifyTrack({
+          spotify_uri: msg.uri,
+          playerInstance: this.spotifyPlayer,
+        })
+      }
     }
   }
 
@@ -103,25 +102,21 @@ class AudioPlayer extends React.Component {
   render() {
     const { spotifyLikes = [] } = this.state
     console.log(112233, this.state)
-    console.log(5050, this.props)
+    console.log(5050, this.spotifyPlayer, this.spotifyToken)
     return (
-      <div>
-        {spotifyLikes.map((i) => {
-          return (
-            <div
-              onClick={() => {
-                playSpotifyTrack({
-                  spotify_uri: i.uri,
-                  playerInstance: this.spotifyPlayer,
-                })
-              }}
-            >
-              <p>{i.name} </p>
-              <img src={i.album.images[0].url} />
-            </div>
-          )
-        })}
-      </div>
+      <>
+        <div className="tracks-container">
+          {spotifyLikes.map((t) => {
+            return <TrackItem trackInfo={t} />
+          })}
+        </div>
+        <div className="audio-player"></div>
+        {/* <audio
+          src={}
+          style={{ display: "none" }}
+          ref={(ref) => (this.audioRef = ref)}
+        /> */}
+      </>
     )
   }
 }

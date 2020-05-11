@@ -6,6 +6,7 @@ const playerInitialState = {
   currentTrack: {
     service: "",
     trackId: null,
+    trackInfo: {},
   },
 }
 
@@ -19,6 +20,7 @@ const playerReducer = (state = playerInitialState, action) => {
         currentTrack: {
           service: action.trackPayload.service,
           trackId: action.trackPayload.trackId,
+          trackInfo: action.trackPayload.trackInfo,
         },
       }
     case "TOGGLE_AUDIO_PLAY":

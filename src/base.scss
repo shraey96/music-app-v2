@@ -141,3 +141,18 @@ body {
 .music-app-container {
   height: 100vh;
 }
+
+@mixin transition() {
+  $transition: all 0.3s ease-in-out;
+  -moz-transition: $transition;
+  -o-transition: $transition;
+  -webkit-transition: $transition;
+  transition: $transition;
+}
+
+.text-ellipsis {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
