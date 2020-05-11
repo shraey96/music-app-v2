@@ -14,4 +14,12 @@ const getQueryParams = (rUrl, p) => {
   return url.searchParams.get(p)
 }
 
-export { getHashParams, getQueryParams }
+const localStorageGetter = (key) => {
+  return JSON.parse(localStorage.getItem(key))
+}
+
+const localStorageSetter = (key, data) => {
+  localStorage.setItem(key, data)
+}
+
+export { getHashParams, getQueryParams, localStorageGetter, localStorageSetter }

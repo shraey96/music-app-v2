@@ -38,7 +38,7 @@ const setSpotifyTokenHeader = (token) => {
 }
 
 const checkSpotifyToken = () => {
-  JSON.parse(localStorage.getItem("spotify_creds") || false)
+  return JSON.parse(localStorage.getItem("spotify_creds") || false)
 }
 
 const getSPPlaylistTracks = async (pURL, baseCollection = []) => {
@@ -67,15 +67,15 @@ const getSPPlaylistTracks = async (pURL, baseCollection = []) => {
 const playSpotifyTrack = ({
   spotify_uri,
   playerInstance: {
-    _options: { getOAuthToken, id },
+    _options: { id },
   },
 }) => {
-  getOAuthToken((access_token) => {
-    spotifyAxios.put(
-      `https://api.spotify.com/v1/me/player/play?device_id=${id}`,
-      { uris: [spotify_uri] }
-    )
-  })
+  return spotifyAxios.put(
+    `https://api.spotify.com/v1/me/player/play?device_id=${id}`,
+    {
+      uris: [spotify_uri],
+    }
+  )
 }
 
 const SPOTIFY_SCOPES = `scope=playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify streaming`

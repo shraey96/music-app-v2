@@ -1,5 +1,8 @@
 import React from "react"
 import { withRouter } from "react-router-dom"
+import { connect } from "react-redux"
+
+import { playTrack, toggleAudioPlay } from "redux-app/actions"
 
 import { getQueryParams } from "utils/helpers"
 import {
@@ -62,15 +65,14 @@ class AudioPlayer extends React.Component {
 
       // Playback status updates
       this.spotifyPlayer.addListener("player_state_changed", (trackState) => {
-        console.log(trackState)
-        if (!trackState.paused) {
-          this.setState({
-            currentTrack: {
-              type: "spotify",
-              track: trackState.track_window.current_track,
-            },
-          })
-        }
+        console.log(44, trackState)
+        this.props.toggleAudioPlay({ isAudioPlaying: !trackState.paused })
+        this.props.playTrack({
+          trackPayload: {
+            service: "spotify",
+            trackId: trackState.track_window.current_track.id,
+          },
+        })
       })
 
       // Ready
@@ -98,8 +100,9 @@ class AudioPlayer extends React.Component {
   }
 
   render() {
-    console.log(112233, this.state)
     const { spotifyLikes = [] } = this.state
+    console.log(112233, this.state)
+    console.log(5050, this.props)
     return (
       <div>
         {spotifyLikes.map((i) => {
@@ -122,6 +125,8 @@ class AudioPlayer extends React.Component {
   }
 }
 
-AudioPlayer = withRouter(AudioPlayer)
+AudioPlayer = withRouter(
+  connect((state) => state, { playTrack, toggleAudioPlay })(AudioPlayer)
+)
 
 export { AudioPlayer }

@@ -1,19 +1,31 @@
-import React from "react"
+import React, { useState, useEffect, Suspense } from "react"
+import { useSelector } from "react-redux"
 
-import { AudioPlayer, Sidebar } from "components"
+import "./base.scss"
 
-import { SPOTIFY_LOGIN_LINK } from "utils/spotifyHelpers"
+const Login = React.lazy(() =>
+  import(/* webpackChunkName: 'Login' */ "pages/Login")
+)
 
-class App extends React.Component {
-  render() {
-    return (
-      <div className="spotify-player">
-        <a href={SPOTIFY_LOGIN_LINK}>Login Spotify</a>
-        <Sidebar />
-        <AudioPlayer />
-      </div>
-    )
-  }
+const Home = React.lazy(() =>
+  import(/* webpackChunkName: 'Home' */ "pages/Home")
+)
+
+const App = () => {
+  const [loader, toggleLoader] = useState(false)
+
+  const userStore = useSelector((state) => state.user)
+  // const isUserAuthAndServices =
+  //   userStore.userAuth && userStore.userInfo.services.length > 0
+  const isUserAuthAndServices = userStore.userAuth
+  console.log(111, isUserAuthAndServices)
+  return (
+    <div className="music-app-container">
+      <Suspense fallback={<></>}>
+        {!isUserAuthAndServices ? <Login /> : <Home />}
+      </Suspense>
+    </div>
+  )
 }
 
 export default App
