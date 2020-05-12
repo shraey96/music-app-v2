@@ -3,11 +3,9 @@ import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
 import { BroadcastChannel } from "broadcast-channel"
 
-import { TrackItem } from "components"
-
 import { playTrack, toggleAudioPlay } from "redux-app/actions"
 
-import { getSPPlaylistTracks, playSpotifyTrack } from "utils/spotifyHelpers"
+import { playSpotifyTrack } from "utils/spotifyHelpers"
 
 import "./style.scss"
 
@@ -28,7 +26,6 @@ class AudioPlayer extends React.Component {
 
     this.spotifyToken = access_token
     this.bindSpotifyPlayer()
-    this.getUserTracks()
   }
 
   bindSpotifyPlayer = () => {
@@ -89,27 +86,10 @@ class AudioPlayer extends React.Component {
     }
   }
 
-  getUserTracks = async () => {
-    const tracks = await getSPPlaylistTracks()
-
-    if (tracks) {
-      this.setState({
-        spotifyLikes: Object.values(tracks),
-      })
-    }
-  }
-
   render() {
-    const { spotifyLikes = [] } = this.state
-    console.log(112233, this.state)
-    console.log(5050, this.spotifyPlayer, this.spotifyToken)
+    console.log(5050, this.spotifyToken)
     return (
       <>
-        <div className="tracks-container">
-          {spotifyLikes.map((t) => {
-            return <TrackItem trackInfo={t} />
-          })}
-        </div>
         <div className="audio-player"></div>
         {/* <audio
           src={}

@@ -3,6 +3,8 @@ import { useSelector } from "react-redux"
 
 import { SIDEBAR_ITEMS } from "utils/constants"
 
+import { SPOTIFY_LOGIN_LINK } from "utils/spotifyHelpers"
+
 import "./style.scss"
 
 export const Sidebar = () => {
@@ -36,6 +38,7 @@ export const Sidebar = () => {
           )
         })}
       </div>
+      <a href={SPOTIFY_LOGIN_LINK}>Login Spotify</a>
     </div>
   )
 }

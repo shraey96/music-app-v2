@@ -22,4 +22,14 @@ const localStorageSetter = (key, data) => {
   localStorage.setItem(key, data)
 }
 
-export { getHashParams, getQueryParams, localStorageGetter, localStorageSetter }
+const paginateArray = (array, page_number) => {
+  return array.slice((page_number - 1) * 50, page_number * 50)
+}
+
+export {
+  getHashParams,
+  getQueryParams,
+  localStorageGetter,
+  localStorageSetter,
+  paginateArray,
+}

@@ -1,0 +1,31 @@
+@import "../../base.scss";
+.tabs-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 999;
+
+  margin-top: 20px;
+  .tab-items-container {
+    margin-bottom: 20px;
+    position: relative;
+    .tab-item {
+      cursor: pointer;
+      display: inline-block;
+      padding: 12px 40px;
+      width: 140px;
+    }
+    .tab-active-slider {
+      position: absolute;
+      height: 2px;
+      left: 0;
+      bottom: 0;
+      background: red;
+      width: 140px;
+      @include transition();
+    }
+  }
+}

@@ -56,11 +56,14 @@ const userReducer = (state = userInitialState, action) => {
         ...action.payload,
       }
 
-    case "UPDATE_USER_LIKES_SPOTIFY":
-      return {
-        ...state,
-        spotifyLikes: action.payload,
-      }
+    case "SET_SPOTIFY_LIKES":
+      return { ...state, spotifyLikes: action.spotifyLikes }
+
+    case "UPDATE_SPOTIFY_LIKES":
+      const spotifyLikes = { ...state.spotifyLikes }
+      if (action.type === "add") spotifyLikes[action.track.id] = action.track
+      if (action.type === "remove") delete spotifyLikes[action.track.id]
+      return { ...state, spotifyLikes }
 
     case "UPDATE_USER_LIKES_SOUNDCLOUD":
       return {

@@ -46,7 +46,7 @@ const checkSpotifyToken = () => {
   return JSON.parse(localStorage.getItem("spotify_creds")) || false
 }
 
-const getSPPlaylistTracks = async (pURL, baseCollection = []) => {
+const getSpotifyLikes = async (pURL, baseCollection = []) => {
   let baseCollectionClone = [...baseCollection]
 
   const response = await spotifyAxios
@@ -60,7 +60,7 @@ const getSPPlaylistTracks = async (pURL, baseCollection = []) => {
     if (response.data.next) {
       baseCollectionClone = [...baseCollectionClone, ...response.data.items]
 
-      return getSPPlaylistTracks(response.data.next, baseCollectionClone)
+      return getSpotifyLikes(response.data.next, baseCollectionClone)
     } else {
       baseCollectionClone = [...baseCollectionClone, ...response.data.items]
       return baseCollectionClone.reduce((a, b) => {
@@ -73,6 +73,26 @@ const getSPPlaylistTracks = async (pURL, baseCollection = []) => {
           a
         )
       }, {})
+    }
+}
+
+const getSpotifyPlaylists = async (baseCollection = []) => {
+  let baseCollectionClone = [...baseCollection]
+
+  const response = await spotifyAxios
+    .get(`https://api.spotify.com/v1/me/playlists?limit=50`)
+    .catch((err) => {
+      console.log(err)
+      return err
+    })
+  if (response.data)
+    if (response.data.next) {
+      baseCollectionClone = [...baseCollectionClone, ...response.data.items]
+
+      return getSpotifyPlaylists(response.data.next, baseCollectionClone)
+    } else {
+      baseCollectionClone = [...baseCollectionClone, ...response.data.items]
+      return baseCollectionClone
     }
 }
 
@@ -91,10 +111,11 @@ const playSpotifyTrack = ({
 }
 
 export {
-  getSPPlaylistTracks,
+  getSpotifyLikes,
   getSpotifyToken,
   checkSpotifyToken,
   setSpotifyAccessToken,
   playSpotifyTrack,
+  getSpotifyPlaylists,
   SPOTIFY_LOGIN_LINK,
 }

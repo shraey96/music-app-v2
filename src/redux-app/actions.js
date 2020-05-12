@@ -14,6 +14,21 @@ const toggleAudioPlay = (payload) => {
   }
 }
 
+const setSpotifyLikes = (payload) => {
+  return {
+    type: "SET_SPOTIFY_LIKES",
+    spotifyLikes: payload.spotifyLikes,
+  }
+}
+
+const updateSpotifyLikes = (payload) => {
+  return {
+    type: "UPDATE_SPOTIFY_LIKES",
+    action: payload.action || "add",
+    track: payload.track,
+  }
+}
+
 const setUserLogin = (payload) => {
   return {
     type: "LOGIN_USER_SUCCESS",
@@ -21,4 +36,10 @@ const setUserLogin = (payload) => {
   }
 }
 
-export { playTrack, toggleAudioPlay, setUserLogin }
+export {
+  playTrack,
+  toggleAudioPlay,
+  setSpotifyLikes,
+  updateSpotifyLikes,
+  setUserLogin,
+}

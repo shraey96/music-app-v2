@@ -14,9 +14,9 @@ const App = (props) => {
   const [loader, toggleLoader] = useState(false)
 
   const userStore = useSelector((state) => state.user)
-  // const isUserAuthAndServices =
-  //   userStore.userAuth && userStore.userInfo.services.length > 0
-  const isUserAuthAndServices = userStore.userAuth
+  const isUserAuthAndServices =
+    userStore.userAuth && userStore.userInfo.services.length > 0
+  // const isUserAuthAndServices = userStore.userAuth
 
   if (isUserAuthAndServices && !props.location.pathname.includes("/home")) {
     // props.history.push("/home")
@@ -25,9 +25,9 @@ const App = (props) => {
     <div className="music-app-container">
       <Suspense fallback={<></>}>
         {!isUserAuthAndServices ? (
-          <Login />
+          <Login userStore={userStore} />
         ) : (
-          <Route exact path="/home/:service?/:section?">
+          <Route exact path="/home/:section?/:service?">
             <Home userStore={userStore} />
           </Route>
         )}
