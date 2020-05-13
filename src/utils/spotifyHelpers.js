@@ -110,6 +110,12 @@ const playSpotifyTrack = ({
   )
 }
 
+const spotifyTrackTimeConvertor = (mil) => {
+  const minutes = Math.floor(mil / 60000)
+  const seconds = ((mil % 60000) / 1000).toFixed(0)
+  return minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+}
+
 export {
   getSpotifyLikes,
   getSpotifyToken,
@@ -117,5 +123,6 @@ export {
   setSpotifyAccessToken,
   playSpotifyTrack,
   getSpotifyPlaylists,
+  spotifyTrackTimeConvertor,
   SPOTIFY_LOGIN_LINK,
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 import { useSelector, useDispatch } from "react-redux"
 
@@ -8,15 +8,19 @@ import { playTrack, toggleAudioPlay } from "redux-app/actions"
 
 import { playSpotifyTrack } from "utils/spotifyHelpers"
 
+import { Timer } from "./Timer"
+
 import "./style.scss"
 
-const AudioPlayer = () => {
+export const AudioPlayer = () => {
   const userStore = useSelector((state) => state.user)
   const playerState = useSelector((state) => state.player)
   const dispatch = useDispatch()
 
   let spotifyToken = null
   let spotifyPlayer = null
+
+  let spotifyPlayerTimerRef = useRef(null)
 
   useEffect(() => {
     if (userStore.userInfo.services.includes("spotify")) {
@@ -28,9 +32,7 @@ const AudioPlayer = () => {
     const storageSpotifyToken = JSON.parse(
       localStorage.getItem("spotify_creds") || false
     )
-
     const { access_token } = storageSpotifyToken
-
     spotifyToken = access_token
     bindSpotifyPlayer()
   }
@@ -43,7 +45,7 @@ const AudioPlayer = () => {
           cb(spotifyToken)
         },
       })
-
+      window.spotifyPlayer = spotifyPlayer
       spotifyPlayer.addListener("initialization_error", ({ message }) => {
         console.error(message)
       })
@@ -60,6 +62,8 @@ const AudioPlayer = () => {
       // Playback status updates
       spotifyPlayer.addListener("player_state_changed", (trackState) => {
         console.log(44, trackState)
+        // spotifyPlayerTimerRef.current.updateTimer(10)
+
         dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
         dispatch(
           playTrack({
@@ -94,6 +98,24 @@ const AudioPlayer = () => {
     }
   }
 
+  const getTrackInfo = () => {
+    const { currentTrack } = playerState
+    const { service, trackId, trackInfo } = currentTrack
+    if (!trackId) return {}
+    if (service === "spotify") {
+      return {
+        trackId: trackId,
+        service: service,
+        cover: trackInfo.album.images[0].url,
+        title: trackInfo.name,
+        duration: trackInfo.duration_ms / 1000, //to covert in seconds//
+        artists: trackInfo.artists.map((a) => a.name).join(", "),
+      }
+    }
+  }
+
+  const { currentTrack, isAudioPlaying } = playerState
+
   console.log(111, playerState)
 
   return (
@@ -101,7 +123,15 @@ const AudioPlayer = () => {
       <div className="audio-player">
         <div className="audio-player__container">
           <div className="audio-player__container__meta">
-            {/* img, title, artist */}
+            <img
+              src={currentTrack.trackId ? getTrackInfo().cover : ""}
+              alt=""
+            />
+
+            <div className="info">
+              <p className="title text-ellipsis">{getTrackInfo().title}</p>
+              <p className="artists text-ellipsis">{getTrackInfo().artists}</p>
+            </div>
           </div>
           <div className="audio-player__container__controls">
             {/* play / pause / shuffle / repeat */}
@@ -109,6 +139,14 @@ const AudioPlayer = () => {
           <div className="audio-player__container__side">
             {/* timer, playlist, volume */}
           </div>
+          <Timer
+            ref={spotifyPlayerTimerRef}
+            service={getTrackInfo().service}
+            duration={getTrackInfo().duration}
+            trackId={getTrackInfo().trackId}
+            isAudioPlaying={isAudioPlaying}
+            spotifyPlayer={spotifyPlayer}
+          />
         </div>
       </div>
       {/* <audio
@@ -119,5 +157,3 @@ const AudioPlayer = () => {
     </>
   )
 }
-
-export { AudioPlayer }

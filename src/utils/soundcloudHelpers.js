@@ -12,7 +12,7 @@ Soundcloud Helpers
 // Soundcloud AJAX Helpers //
 
 const soundcloudAxios = axios.create({
-  headers: { Authorization: `OAuth ${scToken}` }
+  headers: { Authorization: `OAuth ${scToken}` },
 })
 
 const getSCUserLikedTracks = async (uid, lURl, baseCollection = []) => {
@@ -20,7 +20,7 @@ const getSCUserLikedTracks = async (uid, lURl, baseCollection = []) => {
     lURl ||
     `https://api-v2.soundcloud.com/users/${uid}/track_likes?limit=200&linked_partitioning=1`
   let baseCollectionClone = [...baseCollection]
-  const response = await soundcloudAxios.get(proxyURL + url).catch(err => {
+  const response = await soundcloudAxios.get(proxyURL + url).catch((err) => {
     console.log(err)
   })
 
@@ -45,7 +45,7 @@ const getSCUserPlaylist = async (uid, pURl, baseCollection = []) => {
     pURl ||
     `https://api-v2.soundcloud.com/users/${uid}/playlists/liked_and_owned?client_id=${appBase.clientId}&limit=200&offset=0`
   let baseCollectionClone = [...baseCollection]
-  const response = await soundcloudAxios.get(proxyURL + url).catch(err => {
+  const response = await soundcloudAxios.get(proxyURL + url).catch((err) => {
     console.log(err)
   })
   if (response.data.next_href) {
@@ -58,20 +58,20 @@ const getSCUserPlaylist = async (uid, pURl, baseCollection = []) => {
   }
 }
 
-const getSCPlaylistTracks = async playlistId => {
+const getSCPlaylistTracks = async (playlistId) => {
   const playListData = await soundcloudAxios
     .get(
       proxyURL +
         `https://api.soundcloud.com/playlists/${playlistId}?client_id=${appBase.clientId}`
     )
-    .catch(err => {
+    .catch((err) => {
       console.log(err)
     })
   return playListData
 }
 
 // Time Helpers //
-const formatAudioTime = time => {
+const formatAudioTime = (time) => {
   // time = Math.round(time)
   let hrs = ~~(time / 3600)
   let mins = ~~((time % 3600) / 60)
@@ -92,7 +92,6 @@ export {
   getSCUserLikedTracks,
   getSCUserPlaylist,
   getSCPlaylistTracks,
-  formatAudioTime
 }
 
 // shraey => 136003315

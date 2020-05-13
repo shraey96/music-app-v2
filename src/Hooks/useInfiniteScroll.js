@@ -40,16 +40,16 @@ export const useInfiniteScroll = ({ data, type }) => {
 
     if ((scrollTop / pageHeight) * 100 > 70) {
       if (!isFetching && hasNext) {
-        console.log(50505050, "@@@@@fetch", isFetching, hasNext)
+        // console.log(50505050, "@@@@@fetch", isFetching, hasNext)
         setIsFetching(true)
         setPage((page) => page + 1)
       }
     }
   }
 
-  console.log("isFetching ==> ", isFetching)
-  console.log("hasNext ==> ", hasNext)
-  console.log("page ==> ", page)
+  // console.log("isFetching ==> ", isFetching)
+  // console.log("hasNext ==> ", hasNext)
+  // console.log("page ==> ", page)
 
   return { reqData }
 }
