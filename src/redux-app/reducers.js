@@ -8,6 +8,8 @@ const playerInitialState = {
     trackId: null,
     trackInfo: {},
   },
+  playQueue: [],
+  playNextIndex: 0,
 }
 
 const playerReducer = (state = playerInitialState, action) => {
@@ -30,6 +32,17 @@ const playerReducer = (state = playerInitialState, action) => {
       }
     case "ENABLE_SHUFFLE":
       return { ...state, isShuffleMode: !state.isAudioPlaying }
+    case "SET_PLAY_QUEUE":
+      return { ...state, playQueue: action.playQueue }
+    case "UPDATE_PLAY_QUEUE":
+      let playQueueClone = [...state.playQueue]
+      if (action.type === "add") {
+        playQueueClone["index"] = action.track
+      }
+      if (action.type === "remove") {
+        playQueueClone = playQueueClone.filter((z, i) => i !== "index")
+      }
+      return { ...state, playQueue: playQueueClone }
 
     default:
       return state

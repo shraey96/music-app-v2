@@ -138,10 +138,6 @@ body {
   font-family: "Roboto", -apple-system, system-ui, sans-serif, Roboto !important;
 }
 
-.music-app-container {
-  height: 100vh;
-}
-
 @mixin transition() {
   $transition: all 0.3s ease-in-out;
   -moz-transition: $transition;

@@ -1,10 +1,10 @@
 @import "../../base.scss";
 .music-app-home {
   padding-left: 240px;
-  height: 100vh;
   @include transition();
   &__container {
     padding: 20px 60px;
+    padding-bottom: 80px;
     &__likes {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

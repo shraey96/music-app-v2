@@ -1,6 +1,7 @@
-import React from "react"
-import { withRouter } from "react-router-dom"
-import { connect } from "react-redux"
+import React, { useEffect } from "react"
+
+import { useSelector, useDispatch } from "react-redux"
+
 import { BroadcastChannel } from "broadcast-channel"
 
 import { playTrack, toggleAudioPlay } from "redux-app/actions"
@@ -9,100 +10,114 @@ import { playSpotifyTrack } from "utils/spotifyHelpers"
 
 import "./style.scss"
 
-class AudioPlayer extends React.Component {
-  constructor() {
-    super()
-    this.state = {}
-    this.spotifyToken = null
-    this.spotifyPlayer = null
-  }
+const AudioPlayer = () => {
+  const userStore = useSelector((state) => state.user)
+  const playerState = useSelector((state) => state.player)
+  const dispatch = useDispatch()
 
-  async componentDidMount() {
+  let spotifyToken = null
+  let spotifyPlayer = null
+
+  useEffect(() => {
+    if (userStore.userInfo.services.includes("spotify")) {
+      checkSpotify()
+    }
+  }, [])
+
+  const checkSpotify = () => {
     const storageSpotifyToken = JSON.parse(
       localStorage.getItem("spotify_creds") || false
     )
 
     const { access_token } = storageSpotifyToken
 
-    this.spotifyToken = access_token
-    this.bindSpotifyPlayer()
+    spotifyToken = access_token
+    bindSpotifyPlayer()
   }
 
-  bindSpotifyPlayer = () => {
+  const bindSpotifyPlayer = () => {
     window.onSpotifyWebPlaybackSDKReady = () => {
-      this.spotifyPlayer = new window.Spotify.Player({
+      spotifyPlayer = new window.Spotify.Player({
         name: "Spotify Now's App",
         getOAuthToken: (cb) => {
-          cb(this.spotifyToken)
+          cb(spotifyToken)
         },
       })
 
-      this.spotifyPlayer.addListener("initialization_error", ({ message }) => {
+      spotifyPlayer.addListener("initialization_error", ({ message }) => {
         console.error(message)
       })
-      this.spotifyPlayer.addListener("authentication_error", ({ message }) => {
+      spotifyPlayer.addListener("authentication_error", ({ message }) => {
         console.error(message)
       })
-      this.spotifyPlayer.addListener("account_error", ({ message }) => {
+      spotifyPlayer.addListener("account_error", ({ message }) => {
         console.error(message)
       })
-      this.spotifyPlayer.addListener("playback_error", ({ message }) => {
+      spotifyPlayer.addListener("playback_error", ({ message }) => {
         console.error(message)
       })
 
       // Playback status updates
-      this.spotifyPlayer.addListener("player_state_changed", (trackState) => {
+      spotifyPlayer.addListener("player_state_changed", (trackState) => {
         console.log(44, trackState)
-        this.props.toggleAudioPlay({ isAudioPlaying: !trackState.paused })
-        this.props.playTrack({
-          trackPayload: {
-            service: "spotify",
-            trackId: trackState.track_window.current_track.id,
-            trackInfo: trackState.track_window.current_track,
-          },
-        })
+        dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
+        dispatch(
+          playTrack({
+            trackPayload: {
+              service: "spotify",
+              trackId: trackState.track_window.current_track.id,
+              trackInfo: trackState.track_window.current_track,
+            },
+          })
+        )
       })
 
       // Ready
-      this.spotifyPlayer.addListener("ready", (d) => {
+      spotifyPlayer.addListener("ready", (d) => {
         console.log("Ready with Device ID", d, d.device_id)
       })
 
       // Not Ready
-      this.spotifyPlayer.addListener("not_ready", ({ device_id }) => {
+      spotifyPlayer.addListener("not_ready", ({ device_id }) => {
         console.log("Device ID has gone offline", device_id)
       })
 
-      this.spotifyPlayer.connect()
+      spotifyPlayer.connect()
 
       const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
       spotifyChannel.onmessage = (msg) => {
-        console.log(111, msg)
         playSpotifyTrack({
           spotify_uri: msg.uri,
-          playerInstance: this.spotifyPlayer,
+          playerInstance: spotifyPlayer,
         })
       }
     }
   }
 
-  render() {
-    console.log(5050, this.spotifyToken)
-    return (
-      <>
-        <div className="audio-player"></div>
-        {/* <audio
-          src={}
-          style={{ display: "none" }}
-          ref={(ref) => (this.audioRef = ref)}
-        /> */}
-      </>
-    )
-  }
-}
+  console.log(111, playerState)
 
-AudioPlayer = withRouter(
-  connect((state) => state, { playTrack, toggleAudioPlay })(AudioPlayer)
-)
+  return (
+    <>
+      <div className="audio-player">
+        <div className="audio-player__container">
+          <div className="audio-player__container__meta">
+            {/* img, title, artist */}
+          </div>
+          <div className="audio-player__container__controls">
+            {/* play / pause / shuffle / repeat */}
+          </div>
+          <div className="audio-player__container__side">
+            {/* timer, playlist, volume */}
+          </div>
+        </div>
+      </div>
+      {/* <audio
+        src={}
+        style={{ display: "none" }}
+        ref={(ref) => (this.audioRef = ref)}
+      /> */}
+    </>
+  )
+}
 
 export { AudioPlayer }

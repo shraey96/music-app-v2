@@ -1,16 +1,20 @@
 const playTrack = ({ trackPayload }) => {
-  console.log("payload==> ", trackPayload)
-  return (dispatch) => {
-    dispatch({ type: "PLAY_AUDIO", trackPayload })
-  }
+  // return (dispatch) => {
+  //   dispatch({ type: "PLAY_AUDIO", trackPayload })
+  // }
+  return { type: "PLAY_AUDIO", trackPayload }
 }
 
 const toggleAudioPlay = (payload) => {
-  return (dispatch) => {
-    dispatch({
-      type: "TOGGLE_AUDIO_PLAY",
-      isAudioPlaying: payload.isAudioPlaying,
-    })
+  // return (dispatch) => {
+  //   dispatch({
+  //     type: "TOGGLE_AUDIO_PLAY",
+  //     isAudioPlaying: payload.isAudioPlaying,
+  //   })
+  // }
+  return {
+    type: "TOGGLE_AUDIO_PLAY",
+    isAudioPlaying: payload.isAudioPlaying,
   }
 }
 

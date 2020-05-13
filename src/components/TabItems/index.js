@@ -3,11 +3,11 @@ import { useHistory, useParams } from "react-router-dom"
 import "./style.scss"
 
 export const TabItems = ({ tabs = [] }) => {
-  const tabsItemsContainerRef = useRef(null)
-  const tabSliderRef = useRef(null)
-
   const history = useHistory()
   const { service } = useParams()
+
+  const tabsItemsContainerRef = useRef(null)
+  const tabSliderRef = useRef(null)
 
   //   useEffect(() => {
   //     const reqWidth = tabsItemsContainerRef.current.querySelector(
@@ -29,6 +29,7 @@ export const TabItems = ({ tabs = [] }) => {
         {tabs.map((t) => {
           return (
             <div
+              key={t.value}
               className={`tab-item ${
                 t.value.includes(service) && "tab-item--active"
               }`}
