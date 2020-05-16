@@ -44,6 +44,24 @@ const formatAudioTime = (time) => {
   return ret
 }
 
+const getRandomInt = (max) => {
+  return Math.floor(Math.random() * Math.floor(max))
+}
+
+const shuffleArray = (arr) => {
+  const arrLen = arr.length
+  return [...arr].sort((a, b) => {
+    return getRandomInt(arrLen) - getRandomInt(arrLen)
+  })
+}
+
+const shuffleQueue = (arr, index) => {
+  const arrB = arr.filter((_, i) => i < index)
+  const arrA = arr.filter((_, i) => i > index)
+  const arrC = [arr[index]]
+  return [...shuffleArray(arrB), ...arrC, ...shuffleArray(arrA)]
+}
+
 export {
   getHashParams,
   getQueryParams,
@@ -51,4 +69,5 @@ export {
   localStorageSetter,
   paginateArray,
   formatAudioTime,
+  shuffleQueue,
 }

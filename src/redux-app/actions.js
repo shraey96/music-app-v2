@@ -1,5 +1,11 @@
-const playTrack = ({ trackPayload, trackIndex, playQueue }) => {
-  return { type: "PLAY_AUDIO", trackPayload, trackIndex, playQueue }
+const playTrack = ({ trackPayload, trackIndex, playQueue, isAudioPlaying }) => {
+  return {
+    type: "PLAY_AUDIO",
+    trackPayload,
+    trackIndex,
+    playQueue,
+    isAudioPlaying,
+  }
 }
 
 const seekTrack = (seekType) => {
@@ -10,6 +16,13 @@ const toggleAudioPlay = (payload) => {
   return {
     type: "TOGGLE_AUDIO_PLAY",
     isAudioPlaying: payload.isAudioPlaying,
+  }
+}
+
+const toggleShuffle = (isShuffleMode) => {
+  return {
+    type: "TOGGLE_SHUFFLE",
+    isShuffleMode,
   }
 }
 
@@ -38,8 +51,9 @@ const setUserLogin = (payload) => {
 export {
   playTrack,
   toggleAudioPlay,
+  seekTrack,
+  toggleShuffle,
   setSpotifyLikes,
   updateSpotifyLikes,
   setUserLogin,
-  seekTrack,
 }

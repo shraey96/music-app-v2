@@ -7,6 +7,8 @@
   left: 0;
   height: 100vh;
   padding: 20px 0;
+  background-color: #2e3038;
+  color: $text-color;
   &__items-container {
     // height: 100%;
     height: calc(100% - 70px);

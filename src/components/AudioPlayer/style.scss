@@ -1,14 +1,27 @@
+@import "../../base.scss";
 .audio-player {
   position: fixed;
   bottom: 0;
   left: 0;
   height: 70px;
   width: 100%;
-  border: 1px solid;
+  // border: 1px solid;
+  z-index: 999;
+  &::before {
+    content: "";
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 99;
+    height: 70px;
+    backdrop-filter: blur(4px);
+  }
   &__container {
     position: relative;
     height: 100%;
     padding: 4px;
+    z-index: 99;
     // replace below with grid //
     display: flex;
     align-items: center;
@@ -27,6 +40,61 @@
         border-radius: 4px;
       }
       .info {
+        color: $text-color;
+        font-size: 14px;
+        .artists {
+          margin-top: 4px;
+          opacity: 0.4;
+          cursor: pointer;
+        }
+      }
+    }
+    &__controls {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      justify-content: center;
+
+      .player-controls {
+        margin: 0px 42px;
+        display: flex;
+        align-items: center;
+      }
+
+      span {
+        &.control-icon {
+          margin: 0 12px;
+          svg {
+            height: 50px;
+            width: 50px;
+          }
+        }
+      }
+
+      .list-control-icon {
+        svg {
+          height: 24px;
+          width: 24px;
+        }
+      }
+    }
+    &__side {
+      // &__timer {
+      //   margin-right: 24px;
+      // }
+      @include flexAlignCenter();
+      .side-controls {
+        @include flexAlignCenter();
+        .queue-container {
+          margin: 0 24px;
+        }
+        .volume-container {
+          @include flexAlignCenter();
+          margin-right: 20px;
+          .volume-slider {
+            @include flexAlignCenter();
+          }
+        }
       }
     }
     .timer-container {
@@ -35,11 +103,14 @@
         left: 0;
         top: 0;
         width: 100%;
+        margin: 0;
       }
       &__current-time {
         margin-right: 8px;
       }
+      &__current-time,
       &__duration {
+        color: $text-color;
       }
     }
   }
@@ -80,4 +151,25 @@ input[type="range"]::-ms-track {
   background: transparent;
   border-color: transparent;
   color: transparent;
+}
+
+.player-icon {
+  cursor: pointer;
+  &:hover {
+    svg {
+      opacity: 1;
+    }
+  }
+  svg {
+    height: 30px;
+    width: 30px;
+    fill: $text-color;
+    opacity: 0.8;
+    @include transition();
+  }
+  &--active {
+    svg {
+      opacity: 1;
+    }
+  }
 }

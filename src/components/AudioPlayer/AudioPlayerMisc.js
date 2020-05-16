@@ -1,32 +1,97 @@
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-} from "react"
-
+import React, { useState, useEffect } from "react"
 import ReactDOM from "react-dom"
+
+import { useSelector } from "react-redux"
 
 import { formatAudioTime } from "utils/helpers"
 
-export const Timer = forwardRef((props, ref) => {
+import { ICONS } from "iconConstants"
+
+export const QueueView = () => {
+  const [isQueueViewOpen, toggleQueueView] = useState(false)
+  return (
+    <div className="queue-container">
+      <span
+        className={`player-icon queue-icon ${
+          isQueueViewOpen && "queue-icon--active"
+        }`}
+        onClick={() => toggleQueueView((wasOpen) => !wasOpen)}
+      >
+        {ICONS.QUEUE}
+      </span>
+    </div>
+  )
+}
+
+export const VolumeSlider = () => {
+  const [currentVolume, setCurrentVolume] = useState(0)
+  const currentTrack = useSelector((state) => state.player.currentTrack)
+
+  useEffect(() => {
+    if (currentTrack.service === "spotify") {
+      window.spotifyPlayer
+        .getVolume()
+        .then((volume) => setCurrentVolume(volume))
+    } else {
+      setCurrentVolume(toggleAudioTagVolume("get"))
+    }
+  }, [currentTrack])
+
+  const changeVolume = (volume) => {
+    if (currentTrack.service === "spotify") {
+      window.spotifyPlayer.setVolume(volume)
+    }
+
+    setCurrentVolume(volume)
+    toggleAudioTagVolume("set", volume)
+  }
+
+  const toggleAudioTagVolume = (type, volume) => {
+    const audioTag = document.querySelector("#player-audio-tag")
+    if (audioTag) {
+      if (type === "get") return audioTag.volume
+      if (type === "set") audioTag.volume = volume
+    }
+    return 0
+  }
+
+  return (
+    <div className="volume-container">
+      <span className="player-icon volume-icon">
+        {currentVolume === 0
+          ? ICONS.VOL_MUTE
+          : currentVolume < 0.55
+          ? ICONS.VOL_LOW
+          : ICONS.VOL_HIGH}
+      </span>
+      <div className="volume-slider">
+        <input
+          className="volume-slider"
+          type="range"
+          min="0"
+          max={1}
+          value={currentVolume}
+          step="0.05"
+          onChange={(e) => changeVolume(e.target.value)}
+        />
+      </div>
+    </div>
+  )
+}
+
+export const Timer = (props, ref) => {
   const {
     duration,
     trackId,
     isAudioPlaying,
     service,
-    spotifyPlayer,
     portalRef,
     onTrackEnd,
   } = props
   const [currentTime, setCurrentTime] = useState(0)
   const [timerInterval, setTimerInterval] = useState(null)
-  //   let timerInterval = null
 
   useEffect(() => {
-    if (spotifyPlayer) {
-      // bindSpotifySeeker()
-    }
     return () => stopTimer()
   }, [])
 
@@ -56,12 +121,6 @@ export const Timer = forwardRef((props, ref) => {
     }
   }, [currentTime])
 
-  useImperativeHandle(ref, () => {
-    return {
-      updateTimer: updateTimer,
-    }
-  })
-
   const startTimer = () => {
     setTimerInterval(
       setInterval(() => {
@@ -75,6 +134,7 @@ export const Timer = forwardRef((props, ref) => {
   }
 
   const resetTimer = () => {
+    // stopTimer()
     setCurrentTime(0)
   }
 
@@ -119,4 +179,4 @@ export const Timer = forwardRef((props, ref) => {
     </div>,
     portalRef.current
   )
-})
+}

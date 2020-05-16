@@ -5,6 +5,13 @@
   &__container {
     padding: 20px 60px;
     padding-bottom: 80px;
+    background: url("../../images/bg-covers/bg2.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    min-height: 100vh;
+
     &__likes {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

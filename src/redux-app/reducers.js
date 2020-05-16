@@ -1,8 +1,13 @@
-import { localStorageGetter, localStorageSetter } from "utils/helpers"
+import {
+  localStorageGetter,
+  localStorageSetter,
+  shuffleQueue,
+} from "utils/helpers"
 
 const playerInitialState = {
   isAudioPlaying: false,
   isShuffleMode: false,
+  isRepeatMode: 0,
   currentTrack: {
     service: "",
     trackId: null,
@@ -10,7 +15,7 @@ const playerInitialState = {
   },
   playQueue: [],
   trackIndex: 0,
-  nextUpQueue: [],
+  playQueueClone: [],
 }
 
 const playerReducer = (state = playerInitialState, action) => {
@@ -19,7 +24,9 @@ const playerReducer = (state = playerInitialState, action) => {
       return {
         ...state,
         isAudioPlaying:
-          action.trackPayload.isAudioPlaying || state.isAudioPlaying,
+          action.isAudioPlaying === undefined
+            ? state.isAudioPlaying
+            : action.isAudioPlaying,
         currentTrack: {
           service: action.trackPayload.service,
           trackId: action.trackPayload.trackId,
@@ -27,16 +34,28 @@ const playerReducer = (state = playerInitialState, action) => {
         },
         trackIndex: action.trackIndex || 0,
         playQueue: action.playQueue || [],
+        playQueueClone: action.playQueue || [],
       }
     case "TOGGLE_AUDIO_PLAY":
+      console.log(1111, action)
       return {
         ...state,
         isAudioPlaying: action.isAudioPlaying,
       }
-    case "ENABLE_SHUFFLE":
-      return { ...state, isShuffleMode: !state.isAudioPlaying }
+    case "TOGGLE_SHUFFLE":
+      return {
+        ...state,
+        isShuffleMode: action.isShuffleMode || false,
+        playQueue: action.isShuffleMode
+          ? shuffleQueue(state.playQueue, state.trackIndex)
+          : state.playQueue,
+      }
     case "SET_PLAY_QUEUE":
-      return { ...state, playQueue: action.playQueue }
+      return {
+        ...state,
+        playQueue: action.playQueue || [],
+        playQueueClone: action.playQueue || [],
+      }
     case "SEEK_TRACK":
       const trackIndexNew =
         action.seekType === "forward"

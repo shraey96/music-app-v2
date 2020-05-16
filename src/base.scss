@@ -138,12 +138,19 @@ body {
   font-family: "Roboto", -apple-system, system-ui, sans-serif, Roboto !important;
 }
 
+$text-color: #ffffff;
+
 @mixin transition() {
   $transition: all 0.3s ease-in-out;
   -moz-transition: $transition;
   -o-transition: $transition;
   -webkit-transition: $transition;
   transition: $transition;
+}
+
+@mixin flexAlignCenter() {
+  display: flex;
+  align-items: center;
 }
 
 .text-ellipsis {

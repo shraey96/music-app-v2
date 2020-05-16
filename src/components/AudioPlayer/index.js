@@ -4,11 +4,18 @@ import { useSelector, useDispatch } from "react-redux"
 
 import { BroadcastChannel } from "broadcast-channel"
 
-import { playTrack, toggleAudioPlay, seekTrack } from "redux-app/actions"
+import {
+  playTrack,
+  toggleAudioPlay,
+  seekTrack,
+  toggleShuffle,
+} from "redux-app/actions"
 
 import { playSpotifyTrack } from "utils/spotifyHelpers"
 
-import { Timer } from "./Timer"
+import { ICONS } from "../../iconConstants"
+
+import { Timer, QueueView, VolumeSlider } from "./AudioPlayerMisc"
 
 import "./style.scss"
 
@@ -17,30 +24,49 @@ export const AudioPlayer = () => {
   const playerState = useSelector((state) => state.player)
   const dispatch = useDispatch()
 
-  let spotifyToken = null
-  let spotifyPlayer = null
-
-  let spotifyPlayerTimerRef = useRef(null)
-  let timerContainerRef = useRef(null)
-
-  useEffect(() => {
-    if (userStore.userInfo.services.includes("spotify")) {
-      checkSpotify()
-    }
-  }, [])
+  const timerContainerRef = useRef(null)
+  const audioTagRef = useRef(null)
 
   const checkSpotify = () => {
     const storageSpotifyToken = JSON.parse(
       localStorage.getItem("spotify_creds") || false
     )
     const { access_token } = storageSpotifyToken
-    spotifyToken = access_token
-    bindSpotifyPlayer()
+
+    bindSpotifyPlayer(access_token)
   }
 
-  const bindSpotifyPlayer = () => {
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 32) {
+      handlePlayPause()
+    }
+    if (e.ctrlKey) {
+      e.keyCode === 39 && seekPlayerTrack("forward")
+      e.keyCode === 37 && seekPlayerTrack("previous")
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown)
+    if (userStore.userInfo.services.includes("spotify")) {
+      checkSpotify()
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
+
+  useEffect(() => {
+    const { currentTrack } = playerState
+    if (currentTrack.service === "spotify") {
+      playSpotifyTrack({
+        spotify_uri: `spotify:track:${currentTrack.trackId}`,
+        playerInstance: window.spotifyPlayer,
+      })
+    }
+  }, [playerState.currentTrack.service, playerState.currentTrack.trackId])
+
+  const bindSpotifyPlayer = (spotifyToken) => {
     window.onSpotifyWebPlaybackSDKReady = () => {
-      spotifyPlayer = new window.Spotify.Player({
+      const spotifyPlayer = new window.Spotify.Player({
         name: "Spotify Now's App",
         getOAuthToken: (cb) => {
           cb(spotifyToken)
@@ -63,20 +89,8 @@ export const AudioPlayer = () => {
       // Playback status updates
       spotifyPlayer.addListener("player_state_changed", (trackState) => {
         console.log(44, trackState)
-        // spotifyPlayerTimerRef.current.updateTimer(10)
 
         dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
-        // dispatch(
-        //   playTrack({
-        //     trackPayload: {
-        //       service: "spotify",
-        //       trackId: trackState.track_window.current_track.id,
-        //       trackInfo: trackState.track_window.current_track,
-        //     },
-        //     trackIndex: msg.trackIndex,
-        //     playQueue: msg.playQueue,
-        //   })
-        // )
       })
 
       // Ready
@@ -87,19 +101,16 @@ export const AudioPlayer = () => {
       // Not Ready
       spotifyPlayer.addListener("not_ready", ({ device_id }) => {
         console.log("Device ID has gone offline", device_id)
+        dispatch(toggleAudioPlay({ isAudioPlaying: false }))
       })
 
       spotifyPlayer.connect()
 
       const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
       spotifyChannel.onmessage = (msg) => {
-        playSpotifyTrack({
-          spotify_uri: msg.uri,
-          playerInstance: spotifyPlayer,
-        })
-        console.log(222, msg)
         dispatch(
           playTrack({
+            isAudioPlaying: false,
             trackPayload: {
               service: "spotify",
               trackId: msg.trackId,
@@ -129,7 +140,28 @@ export const AudioPlayer = () => {
     }
   }
 
-  const { currentTrack, isAudioPlaying } = playerState
+  const handlePlayPause = () => {
+    const { currentTrack, isAudioPlaying } = playerState
+    console.log(9090, isAudioPlaying, playerState.isAudioPlaying)
+    dispatch(toggleAudioPlay({ isAudioPlaying: !isAudioPlaying }))
+    if (currentTrack.service === "spotify") {
+      window.spotifyPlayer.togglePlay()
+    }
+    if (currentTrack.service === "soundcloud") {
+      isAudioPlaying ? audioTagRef.current.pause() : audioTagRef.current.play()
+    }
+  }
+
+  const seekPlayerTrack = (type = "forward") => {
+    dispatch(seekTrack(type))
+  }
+
+  const {
+    currentTrack,
+    isAudioPlaying,
+    isRepeatMode,
+    isShuffleMode,
+  } = playerState
 
   console.log(111, playerState)
   return (
@@ -147,35 +179,74 @@ export const AudioPlayer = () => {
             </div>
           </div>
           <div className="audio-player__container__controls">
-            {/* play / pause / shuffle / repeat */}
+            <span
+              className={`player-icon list-control-icon ${
+                isShuffleMode && "player-icon--active"
+              }`}
+              onClick={() => dispatch(toggleShuffle(!isShuffleMode))}
+            >
+              {ICONS.SHUFFLE}
+            </span>
+            <div className="player-controls">
+              <span
+                className="player-icon seek-icon seek-icon--backwards"
+                onClick={() => seekPlayerTrack("previous")}
+              >
+                {ICONS.SKIP_PREV}
+              </span>
+              <span
+                className={`player-icon control-icon control-icon--${
+                  isAudioPlaying ? "play" : "pause"
+                }`}
+                onClick={() => handlePlayPause()}
+              >
+                {isAudioPlaying ? ICONS.PAUSE_CIRCLE : ICONS.PLAY_CIRCLE}
+              </span>
+              <span
+                className="player-icon seek-icon seek-icon--backwards"
+                onClick={() => seekPlayerTrack("forward")}
+              >
+                {ICONS.SKIP_NEXT}
+              </span>
+            </div>
+            <span
+              className={`player-icon list-control-icon ${
+                (isRepeatMode === 1 || isRepeatMode === 2) &&
+                "list-control-icon--active"
+              }`}
+            >
+              {ICONS.REPEAT}
+            </span>
           </div>
           <div className="audio-player__container__side">
-            {/* timer, playlist, volume */}
             <div
               className="audio-player__container__side__timer"
               id="111"
               ref={timerContainerRef}
             />
+            <div className="side-controls">
+              <QueueView />
+              <VolumeSlider />
+            </div>
           </div>
           {timerContainerRef.current && (
             <Timer
-              ref={spotifyPlayerTimerRef}
               portalRef={timerContainerRef}
               service={getTrackInfo().service}
               duration={getTrackInfo().duration}
               trackId={getTrackInfo().trackId}
               isAudioPlaying={isAudioPlaying}
-              spotifyPlayer={spotifyPlayer}
-              onTrackEnd={() => dispatch(seekTrack("forward"))}
+              onTrackEnd={() => seekPlayerTrack("forward")}
             />
           )}
         </div>
       </div>
-      {/* <audio
-        src={}
+      <audio
+        src={""}
+        id="player-audio-tag"
         style={{ display: "none" }}
-        ref={(ref) => (this.audioRef = ref)}
-      /> */}
+        ref={audioTagRef}
+      />
     </>
   )
 }

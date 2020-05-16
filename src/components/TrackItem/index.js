@@ -1,8 +1,11 @@
 import React from "react"
 
+import { EllipsisScroll } from "components"
+
 import "./style.scss"
 
 export const TrackItem = ({ trackInfo, playTrack }) => {
+  const artists = trackInfo.artists.map((a) => a.name).join(", ")
   return (
     <div
       className={`track-item track-item--${trackInfo.trackType}`}
@@ -13,7 +16,10 @@ export const TrackItem = ({ trackInfo, playTrack }) => {
         alt=""
         className="track-item__cover"
       />
-      <div className="track-item__title text-ellipsis">{trackInfo.name}</div>
+      {/* <div className="track-item__title text-ellipsis">{trackInfo.name}</div> */}
+      <div className="text-ellipsis">
+        <EllipsisScroll classNames="track-item__title" text={trackInfo.name} />
+      </div>
     </div>
   )
 }
