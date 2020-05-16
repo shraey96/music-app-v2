@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux"
 
 import { BroadcastChannel } from "broadcast-channel"
 
-import { playTrack, toggleAudioPlay } from "redux-app/actions"
+import { playTrack, toggleAudioPlay, seekTrack } from "redux-app/actions"
 
 import { playSpotifyTrack } from "utils/spotifyHelpers"
 
@@ -21,6 +21,7 @@ export const AudioPlayer = () => {
   let spotifyPlayer = null
 
   let spotifyPlayerTimerRef = useRef(null)
+  let timerContainerRef = useRef(null)
 
   useEffect(() => {
     if (userStore.userInfo.services.includes("spotify")) {
@@ -65,15 +66,17 @@ export const AudioPlayer = () => {
         // spotifyPlayerTimerRef.current.updateTimer(10)
 
         dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
-        dispatch(
-          playTrack({
-            trackPayload: {
-              service: "spotify",
-              trackId: trackState.track_window.current_track.id,
-              trackInfo: trackState.track_window.current_track,
-            },
-          })
-        )
+        // dispatch(
+        //   playTrack({
+        //     trackPayload: {
+        //       service: "spotify",
+        //       trackId: trackState.track_window.current_track.id,
+        //       trackInfo: trackState.track_window.current_track,
+        //     },
+        //     trackIndex: msg.trackIndex,
+        //     playQueue: msg.playQueue,
+        //   })
+        // )
       })
 
       // Ready
@@ -94,6 +97,18 @@ export const AudioPlayer = () => {
           spotify_uri: msg.uri,
           playerInstance: spotifyPlayer,
         })
+        console.log(222, msg)
+        dispatch(
+          playTrack({
+            trackPayload: {
+              service: "spotify",
+              trackId: msg.trackId,
+              trackInfo: msg.trackInfo,
+            },
+            trackIndex: msg.trackIndex,
+            playQueue: msg.playQueue,
+          })
+        )
       }
     }
   }
@@ -108,7 +123,7 @@ export const AudioPlayer = () => {
         service: service,
         cover: trackInfo.album.images[0].url,
         title: trackInfo.name,
-        duration: trackInfo.duration_ms / 1000, //to covert in seconds//
+        duration: Math.ceil(trackInfo.duration_ms / 1000), //to covert in seconds//
         artists: trackInfo.artists.map((a) => a.name).join(", "),
       }
     }
@@ -117,7 +132,6 @@ export const AudioPlayer = () => {
   const { currentTrack, isAudioPlaying } = playerState
 
   console.log(111, playerState)
-
   return (
     <>
       <div className="audio-player">
@@ -127,7 +141,6 @@ export const AudioPlayer = () => {
               src={currentTrack.trackId ? getTrackInfo().cover : ""}
               alt=""
             />
-
             <div className="info">
               <p className="title text-ellipsis">{getTrackInfo().title}</p>
               <p className="artists text-ellipsis">{getTrackInfo().artists}</p>
@@ -138,15 +151,24 @@ export const AudioPlayer = () => {
           </div>
           <div className="audio-player__container__side">
             {/* timer, playlist, volume */}
+            <div
+              className="audio-player__container__side__timer"
+              id="111"
+              ref={timerContainerRef}
+            />
           </div>
-          <Timer
-            ref={spotifyPlayerTimerRef}
-            service={getTrackInfo().service}
-            duration={getTrackInfo().duration}
-            trackId={getTrackInfo().trackId}
-            isAudioPlaying={isAudioPlaying}
-            spotifyPlayer={spotifyPlayer}
-          />
+          {timerContainerRef.current && (
+            <Timer
+              ref={spotifyPlayerTimerRef}
+              portalRef={timerContainerRef}
+              service={getTrackInfo().service}
+              duration={getTrackInfo().duration}
+              trackId={getTrackInfo().trackId}
+              isAudioPlaying={isAudioPlaying}
+              spotifyPlayer={spotifyPlayer}
+              onTrackEnd={() => dispatch(seekTrack("forward"))}
+            />
+          )}
         </div>
       </div>
       {/* <audio

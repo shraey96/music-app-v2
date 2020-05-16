@@ -1,17 +1,12 @@
-const playTrack = ({ trackPayload }) => {
-  // return (dispatch) => {
-  //   dispatch({ type: "PLAY_AUDIO", trackPayload })
-  // }
-  return { type: "PLAY_AUDIO", trackPayload }
+const playTrack = ({ trackPayload, trackIndex, playQueue }) => {
+  return { type: "PLAY_AUDIO", trackPayload, trackIndex, playQueue }
+}
+
+const seekTrack = (seekType) => {
+  return { type: "SEEK_TRACK", seekType }
 }
 
 const toggleAudioPlay = (payload) => {
-  // return (dispatch) => {
-  //   dispatch({
-  //     type: "TOGGLE_AUDIO_PLAY",
-  //     isAudioPlaying: payload.isAudioPlaying,
-  //   })
-  // }
   return {
     type: "TOGGLE_AUDIO_PLAY",
     isAudioPlaying: payload.isAudioPlaying,
@@ -46,4 +41,5 @@ export {
   setSpotifyLikes,
   updateSpotifyLikes,
   setUserLogin,
+  seekTrack,
 }

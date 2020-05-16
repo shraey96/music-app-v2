@@ -1,15 +1,12 @@
 import React from "react"
-import { BroadcastChannel } from "broadcast-channel"
 
 import "./style.scss"
 
-const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
-
-export const TrackItem = ({ trackInfo }) => {
+export const TrackItem = ({ trackInfo, playTrack }) => {
   return (
     <div
       className={`track-item track-item--${trackInfo.trackType}`}
-      onClick={() => spotifyChannel.postMessage({ uri: trackInfo.uri })}
+      onClick={() => playTrack && playTrack(trackInfo.uri)}
     >
       <img
         src={trackInfo.album.images[0].url}

@@ -9,7 +9,8 @@ const playerInitialState = {
     trackInfo: {},
   },
   playQueue: [],
-  playNextIndex: 0,
+  trackIndex: 0,
+  nextUpQueue: [],
 }
 
 const playerReducer = (state = playerInitialState, action) => {
@@ -24,6 +25,8 @@ const playerReducer = (state = playerInitialState, action) => {
           trackId: action.trackPayload.trackId,
           trackInfo: action.trackPayload.trackInfo,
         },
+        trackIndex: action.trackIndex || 0,
+        playQueue: action.playQueue || [],
       }
     case "TOGGLE_AUDIO_PLAY":
       return {
@@ -34,15 +37,40 @@ const playerReducer = (state = playerInitialState, action) => {
       return { ...state, isShuffleMode: !state.isAudioPlaying }
     case "SET_PLAY_QUEUE":
       return { ...state, playQueue: action.playQueue }
+    case "SEEK_TRACK":
+      const trackIndexNew =
+        action.seekType === "forward"
+          ? state.trackIndex + 1
+          : state.trackIndex === 0
+          ? 0
+          : state.trackIndex - 1
+      const newTrack = state.playQueue[trackIndexNew]
+      const currentTrackNew = {
+        service: newTrack.trackType,
+        trackId: newTrack.trackType === "spotify" ? newTrack.id : 0,
+        trackInfo: newTrack,
+      }
+
+      return {
+        ...state,
+        currentTrack: currentTrackNew,
+        trackIndex: trackIndexNew,
+      }
+
     case "UPDATE_PLAY_QUEUE":
-      let playQueueClone = [...state.playQueue]
-      if (action.type === "add") {
-        playQueueClone["index"] = action.track
+      if (action.trackIndex && action.type) {
+        let playQueueClone = [...state.playQueue]
+        if (action.type === "add") {
+          playQueueClone[action.trackIndex] = action.track
+        }
+        if (action.type === "remove") {
+          playQueueClone = playQueueClone.filter(
+            (z, i) => i !== action.trackIndex
+          )
+        }
+        return { ...state, playQueue: playQueueClone }
       }
-      if (action.type === "remove") {
-        playQueueClone = playQueueClone.filter((z, i) => i !== "index")
-      }
-      return { ...state, playQueue: playQueueClone }
+      return state
 
     default:
       return state

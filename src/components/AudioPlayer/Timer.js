@@ -5,14 +5,23 @@ import React, {
   useImperativeHandle,
 } from "react"
 
-import Slider from "react-smooth-range-input"
+import ReactDOM from "react-dom"
 
 import { formatAudioTime } from "utils/helpers"
 
 export const Timer = forwardRef((props, ref) => {
-  const { duration, trackId, isAudioPlaying, service, spotifyPlayer } = props
+  const {
+    duration,
+    trackId,
+    isAudioPlaying,
+    service,
+    spotifyPlayer,
+    portalRef,
+    onTrackEnd,
+  } = props
   const [currentTime, setCurrentTime] = useState(0)
-  let timerInterval = null
+  const [timerInterval, setTimerInterval] = useState(null)
+  //   let timerInterval = null
 
   useEffect(() => {
     if (spotifyPlayer) {
@@ -39,6 +48,14 @@ export const Timer = forwardRef((props, ref) => {
     }
   }, [trackId])
 
+  useEffect(() => {
+    if (currentTime >= duration) {
+      stopTimer()
+      resetTimer()
+      onTrackEnd && onTrackEnd(trackId)
+    }
+  }, [currentTime])
+
   useImperativeHandle(ref, () => {
     return {
       updateTimer: updateTimer,
@@ -46,9 +63,11 @@ export const Timer = forwardRef((props, ref) => {
   })
 
   const startTimer = () => {
-    timerInterval = setInterval(() => {
-      setCurrentTime((time) => time + 1)
-    }, 1000)
+    setTimerInterval(
+      setInterval(() => {
+        setCurrentTime((time) => time + 1)
+      }, 1000)
+    )
   }
 
   const stopTimer = () => {
@@ -63,18 +82,15 @@ export const Timer = forwardRef((props, ref) => {
     setCurrentTime(val)
   }
 
-  console.log(99999, currentTime)
-
-  return (
+  return ReactDOM.createPortal(
     <div className="timer-container">
-      <span>{formatAudioTime(currentTime)}</span>
       <input
         type="range"
+        className="timer-container__slider"
         min={0}
         max={duration}
         value={currentTime}
         step={1}
-        //   onChange={(e) => (this._audio.currentTime = e.target.value)}
         onChange={(e) => {
           updateTimer(parseInt(e.target.value, 10))
           if (service === "spotify") {
@@ -94,7 +110,13 @@ export const Timer = forwardRef((props, ref) => {
           }
         }}
       />
-      <span>{formatAudioTime(duration || 0)}</span>
-    </div>
+      <span className="timer-container__current-time">
+        {formatAudioTime(currentTime)}
+      </span>
+      <span className="timer-container__duration">
+        {formatAudioTime(duration || 0)}
+      </span>
+    </div>,
+    portalRef.current
   )
 })

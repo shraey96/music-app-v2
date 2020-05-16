@@ -1,5 +1,9 @@
 import axios from "axios"
 
+import { BroadcastChannel } from "broadcast-channel"
+
+const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
+
 const SPOTIFY_CLIENT_ID = `28bc6211497a4a93a51866c234ed3e40`
 const SPOTIFY_SCOPES = `scope=playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify streaming`
 const SPOTIFY_REDIRECT_URI = `http://localhost:3000/callback/spotify/`
@@ -110,6 +114,16 @@ const playSpotifyTrack = ({
   )
 }
 
+const playSpotifyTrackComponent = ({
+  uri,
+  trackIndex = 0,
+  playQueue = [],
+  trackId,
+  trackInfo,
+}) => {
+  spotifyChannel.postMessage({ uri, trackIndex, playQueue, trackId, trackInfo })
+}
+
 const spotifyTrackTimeConvertor = (mil) => {
   const minutes = Math.floor(mil / 60000)
   const seconds = ((mil % 60000) / 1000).toFixed(0)
@@ -122,6 +136,7 @@ export {
   checkSpotifyToken,
   setSpotifyAccessToken,
   playSpotifyTrack,
+  playSpotifyTrackComponent,
   getSpotifyPlaylists,
   spotifyTrackTimeConvertor,
   SPOTIFY_LOGIN_LINK,
