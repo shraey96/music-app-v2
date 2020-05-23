@@ -9,6 +9,9 @@ import { ICONS } from "iconConstants"
 
 export const QueueView = () => {
   const [isQueueViewOpen, toggleQueueView] = useState(false)
+  const playerState = useSelector((state) => state.player)
+  const { playQueue } = playerState
+  console.log(playQueue)
   return (
     <div className="queue-container">
       <span
@@ -19,6 +22,15 @@ export const QueueView = () => {
       >
         {ICONS.QUEUE}
       </span>
+      <div className="queue-container__tracks">
+        {playQueue.map((t) => {
+          return (
+            <div className="" key={t.id}>
+              {t.name}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -68,10 +80,10 @@ export const VolumeSlider = () => {
         <input
           className="volume-slider"
           type="range"
-          min="0"
+          min={0}
           max={1}
+          step={0.05}
           value={currentVolume}
-          step="0.05"
           onChange={(e) => changeVolume(e.target.value)}
         />
       </div>
@@ -79,7 +91,7 @@ export const VolumeSlider = () => {
   )
 }
 
-export const Timer = (props, ref) => {
+export const Timer = (props) => {
   const {
     duration,
     trackId,

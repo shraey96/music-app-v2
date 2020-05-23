@@ -87,6 +87,30 @@
         @include flexAlignCenter();
         .queue-container {
           margin: 0 24px;
+          position: relative;
+          &__tracks {
+            position: absolute;
+            bottom: 30px;
+            right: 0px;
+            overflow: scroll;
+            overflow-x: hidden;
+            width: 400px;
+            height: 400px;
+
+            padding: 10px;
+            &::before {
+              content: "";
+              width: 100%;
+              position: fixed;
+              position: absolute;
+              bottom: 30px;
+              right: 0px;
+              z-index: 99;
+              width: 400px;
+              height: 400px;
+              backdrop-filter: blur(6px);
+            }
+          }
         }
         .volume-container {
           @include flexAlignCenter();
