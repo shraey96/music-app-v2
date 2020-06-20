@@ -54,6 +54,9 @@
       align-items: center;
       flex-grow: 1;
       justify-content: center;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
 
       .player-controls {
         margin: 0px 42px;

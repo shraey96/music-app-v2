@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react"
 
 import { useSelector, useDispatch } from "react-redux"
 
+import { motion } from "framer-motion"
+
 import { BroadcastChannel } from "broadcast-channel"
 
 import {
@@ -56,13 +58,18 @@ export const AudioPlayer = () => {
 
   useEffect(() => {
     const { currentTrack } = playerState
+
     if (currentTrack.service === "spotify") {
       playSpotifyTrack({
         spotify_uri: `spotify:track:${currentTrack.trackId}`,
         playerInstance: window.spotifyPlayer,
       })
     }
-  }, [playerState.currentTrack.service, playerState.currentTrack.trackId])
+  }, [
+    playerState.currentTrack.service,
+    playerState.currentTrack.trackId,
+    playerState.isAudioPlaying,
+  ])
 
   const bindSpotifyPlayer = (spotifyToken) => {
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -108,18 +115,23 @@ export const AudioPlayer = () => {
 
       const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
       spotifyChannel.onmessage = (msg) => {
-        dispatch(
-          playTrack({
-            isAudioPlaying: false,
-            trackPayload: {
-              service: "spotify",
-              trackId: msg.trackId,
-              trackInfo: msg.trackInfo,
-            },
-            trackIndex: msg.trackIndex,
-            playQueue: msg.playQueue,
-          })
-        )
+        if (msg.type === "playTrack") {
+          dispatch(
+            playTrack({
+              isAudioPlaying: false,
+              trackPayload: {
+                service: "spotify",
+                trackId: msg.trackId,
+                trackInfo: msg.trackInfo,
+              },
+              trackIndex: msg.trackIndex,
+              playQueue: msg.playQueue,
+            })
+          )
+        }
+        if (msg.type === "togglePlayPause") {
+          // handlePlayPause()
+        }
       }
     }
   }
@@ -142,7 +154,7 @@ export const AudioPlayer = () => {
 
   const handlePlayPause = () => {
     const { currentTrack, isAudioPlaying } = playerState
-    console.log(9090, isAudioPlaying, playerState.isAudioPlaying)
+
     dispatch(toggleAudioPlay({ isAudioPlaying: !isAudioPlaying }))
     if (currentTrack.service === "spotify") {
       window.spotifyPlayer.togglePlay()
@@ -166,7 +178,12 @@ export const AudioPlayer = () => {
   console.log(111, playerState)
   return (
     <>
-      <div className="audio-player">
+      <motion.div
+        initial={{ y: 80 }}
+        animate={{ y: 0 }}
+        transition={{ delay: 1.5 }}
+        className="audio-player"
+      >
         <div className="audio-player__container">
           <div className="audio-player__container__meta">
             <img
@@ -225,7 +242,7 @@ export const AudioPlayer = () => {
               ref={timerContainerRef}
             />
             <div className="side-controls">
-              <QueueView />
+              {/* <QueueView /> */}
               <VolumeSlider />
             </div>
           </div>
@@ -240,7 +257,7 @@ export const AudioPlayer = () => {
             />
           )}
         </div>
-      </div>
+      </motion.div>
       <audio
         src={""}
         id="player-audio-tag"

@@ -1,7 +1,7 @@
 import React from "react"
 import { Switch, Route } from "react-router-dom"
 import { TabItems } from "components"
-import { Spotify } from "./Spotify"
+import { SpotifyLikes } from "./Spotify"
 
 const tabItems = [
   {
@@ -21,7 +21,7 @@ export const Likes = () => {
       <div className="music-app-home__container__likes">
         <Switch>
           <Route exact path="/home/likes/spotify">
-            <Spotify />
+            <SpotifyLikes />
           </Route>
         </Switch>
       </div>

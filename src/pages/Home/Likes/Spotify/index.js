@@ -5,7 +5,7 @@ import { TrackItem } from "components"
 
 import { playSpotifyTrackComponent } from "utils/spotifyHelpers"
 
-export const Spotify = () => {
+export const SpotifyLikes = () => {
   const spotifyLikes = useSelector((state) => state.user.spotifyLikes)
   const spotifyLikesArray = Object.values(spotifyLikes || {})
   const { reqData = [] } = useInfiniteScroll({
@@ -28,6 +28,7 @@ export const Spotify = () => {
         return (
           <TrackItem
             key={t.id}
+            index={i}
             trackInfo={t}
             playTrack={() => playTrack(i, t)}
           />

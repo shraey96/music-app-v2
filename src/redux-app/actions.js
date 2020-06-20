@@ -33,6 +33,13 @@ const setSpotifyLikes = (payload) => {
   }
 }
 
+const setSpotifyPlaylists = (payload) => {
+  return {
+    type: "SET_SPOTIFY_PLAYLISTS",
+    spotifyPlaylists: payload.spotifyPlaylists,
+  }
+}
+
 const updateSpotifyLikes = (payload) => {
   return {
     type: "UPDATE_SPOTIFY_LIKES",
@@ -54,6 +61,7 @@ export {
   seekTrack,
   toggleShuffle,
   setSpotifyLikes,
+  setSpotifyPlaylists,
   updateSpotifyLikes,
   setUserLogin,
 }

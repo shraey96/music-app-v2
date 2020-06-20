@@ -100,9 +100,9 @@ const userInitialState = {
   userAuth: localStorageGetter("app_token") || false,
   userInfo: localStorageGetter("app_userInfo") || { email: "", services: [] },
   spotifyLikes: {},
-  spotifyPlaylist: {},
+  spotifyPlaylists: [],
   soundcloudLikes: {},
-  soundcloudPlaylist: {},
+  soundcloudPlaylist: [],
 }
 
 const userReducer = (state = userInitialState, action) => {
@@ -118,6 +118,9 @@ const userReducer = (state = userInitialState, action) => {
 
     case "SET_SPOTIFY_LIKES":
       return { ...state, spotifyLikes: action.spotifyLikes }
+
+    case "SET_SPOTIFY_PLAYLISTS":
+      return { ...state, spotifyPlaylists: action.spotifyPlaylists }
 
     case "UPDATE_SPOTIFY_LIKES":
       const spotifyLikes = { ...state.spotifyLikes }

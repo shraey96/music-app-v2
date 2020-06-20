@@ -1,21 +1,21 @@
 @import "../../base.scss";
 .music-app-home {
   padding-left: 240px;
+  background-color: #191923;
   @include transition();
+  &--full {
+    padding-left: 80px;
+  }
   &__container {
     padding: 20px 60px;
     padding-bottom: 80px;
-    background: url("../../images/bg-covers/bg2.jpeg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
     min-height: 100vh;
 
-    &__likes {
+    &__likes,
+    &__playlists {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      grid-gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-row-gap: 30px;
     }
   }
 }

@@ -1,13 +1,17 @@
 import React from "react"
-
+import { motion } from "framer-motion"
 import { EllipsisScroll } from "components"
 
 import "./style.scss"
 
-export const TrackItem = ({ trackInfo, playTrack }) => {
+export const TrackItem = ({ trackInfo, playTrack, index }) => {
   const artists = trackInfo.artists.map((a) => a.name).join(", ")
+
   return (
-    <div
+    <motion.div
+      initial={{ originX: 0, originY: 0, scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 0.05 * (index % 50), type: "spring", stiffness: 50 }}
       className={`track-item track-item--${trackInfo.trackType}`}
       onClick={() => playTrack && playTrack(trackInfo.uri)}
     >
@@ -16,10 +20,7 @@ export const TrackItem = ({ trackInfo, playTrack }) => {
         alt=""
         className="track-item__cover"
       />
-      {/* <div className="track-item__title text-ellipsis">{trackInfo.name}</div> */}
-      <div className="text-ellipsis">
-        <EllipsisScroll classNames="track-item__title" text={trackInfo.name} />
-      </div>
-    </div>
+      <EllipsisScroll classNames="track-item__title" text={trackInfo.name} />
+    </motion.div>
   )
 }

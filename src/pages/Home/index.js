@@ -4,13 +4,15 @@ import { useDispatch } from "react-redux"
 
 import { AudioPlayer, Sidebar } from "components"
 import { Likes } from "./Likes"
+import { Playlists } from "./Playlists"
 
-import { setSpotifyLikes } from "redux-app/actions"
+import { setSpotifyLikes, setSpotifyPlaylists } from "redux-app/actions"
 
 import {
   checkSpotifyToken,
   setSpotifyAccessToken,
   getSpotifyLikes,
+  getSpotifyPlaylists,
 } from "utils/spotifyHelpers"
 
 import "./style.scss"
@@ -32,6 +34,14 @@ const Home = (props) => {
           })
         )
       )
+
+      getSpotifyPlaylists().then((playlists) => {
+        dispatch(
+          setSpotifyPlaylists({
+            spotifyPlaylists: playlists,
+          })
+        )
+      })
     }
     props.history.push("/home/likes/spotify")
     setTokenLoader(false)
@@ -42,14 +52,17 @@ const Home = (props) => {
   return (
     <>
       <Sidebar />
-      {/* <AudioPlayer /> */}
       <div className="music-app-home">
         <div className="music-app-home__container">
           <AudioPlayer />
-
-          <Route exact path="/home/likes/:service?">
-            <Likes />
-          </Route>
+          <Switch>
+            <Route exact path="/home/likes/:service?">
+              <Likes />
+            </Route>
+            <Route exact path="/home/playlists/:service?">
+              <Playlists />
+            </Route>
+          </Switch>
         </div>
       </div>
     </>

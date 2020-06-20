@@ -80,11 +80,11 @@ const getSpotifyLikes = async (pURL, baseCollection = []) => {
     }
 }
 
-const getSpotifyPlaylists = async (baseCollection = []) => {
+const getSpotifyPlaylists = async (pURL, baseCollection = []) => {
   let baseCollectionClone = [...baseCollection]
 
   const response = await spotifyAxios
-    .get(`https://api.spotify.com/v1/me/playlists?limit=50`)
+    .get(pURL || `https://api.spotify.com/v1/me/playlists?limit=50`)
     .catch((err) => {
       console.log(err)
       return err
@@ -98,6 +98,34 @@ const getSpotifyPlaylists = async (baseCollection = []) => {
       baseCollectionClone = [...baseCollectionClone, ...response.data.items]
       return baseCollectionClone
     }
+}
+
+const getSpotifyPlaylistTracks = async (
+  pURL,
+  playlistId,
+  baseCollection = []
+) => {
+  let baseCollectionClone = [...baseCollection]
+  const response = await spotifyAxios.get(pURL).catch((err) => {
+    return err
+  })
+  if (response.data) {
+    if (response.data.next) {
+      baseCollectionClone = [...baseCollectionClone, ...response.data.items]
+      return getSpotifyPlaylistTracks(
+        response.data.next,
+        playlistId,
+        baseCollectionClone
+      )
+    } else {
+      baseCollectionClone = [...baseCollectionClone, ...response.data.items]
+      return baseCollectionClone.map((t) => ({
+        ...t.track,
+        trackType: "spotify",
+        playlistId: playlistId,
+      }))
+    }
+  }
 }
 
 const playSpotifyTrack = ({
@@ -121,7 +149,14 @@ const playSpotifyTrackComponent = ({
   trackId,
   trackInfo,
 }) => {
-  spotifyChannel.postMessage({ uri, trackIndex, playQueue, trackId, trackInfo })
+  spotifyChannel.postMessage({
+    type: "playTrack",
+    uri,
+    trackIndex,
+    playQueue,
+    trackId,
+    trackInfo,
+  })
 }
 
 const spotifyTrackTimeConvertor = (mil) => {
@@ -139,5 +174,7 @@ export {
   playSpotifyTrackComponent,
   getSpotifyPlaylists,
   spotifyTrackTimeConvertor,
+  getSpotifyPlaylistTracks,
+  spotifyAxios,
   SPOTIFY_LOGIN_LINK,
 }

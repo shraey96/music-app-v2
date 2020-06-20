@@ -1,7 +1,7 @@
 @import "../../base.scss";
 .sidebar {
   box-shadow: 0px 3px 46px #00000029;
-  width: 240px;
+  width: 280px;
   position: fixed;
   top: 0;
   left: 0;
@@ -9,31 +9,88 @@
   padding: 20px 0;
   background-color: #2e3038;
   color: $text-color;
+  @include transition();
+  &--minimized {
+    width: 80px;
+    overflow: hidden;
+  }
   &__items-container {
-    // height: 100%;
     height: calc(100% - 70px);
+    position: relative;
+    margin-top: 30px;
+    .minimize-toggle {
+      position: absolute;
+      top: -40px;
+      right: 20px;
+      cursor: pointer;
+      @include transition();
+      transition-delay: 0.2s;
+      opacity: 0.6;
+      svg {
+        fill: $text-color;
+      }
+      &:hover {
+        opacity: 1;
+      }
+      &--minimized {
+        transform: rotate(180deg);
+        right: 30px;
+      }
+    }
   }
   &__section {
     margin-bottom: 20px;
     cursor: pointer;
+    position: relative;
+
+    &__items-container {
+      position: absolute;
+      left: 70px;
+      top: 10px;
+      width: calc(100% - 90px);
+      z-index: 99;
+      @include transition();
+      &--minimized {
+        position: none;
+        opacity: 0;
+      }
+    }
+
     &__label {
       font-weight: bold;
       font-size: 20px;
       margin-bottom: 8px;
       padding-left: 20px;
+      @include transition();
+      opacity: 0.6;
+      img {
+        border-radius: 50%;
+        height: 32px;
+        width: 32px;
+      }
+      &--active,
+      &:hover {
+        opacity: 1;
+      }
     }
     &__item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-right: 8px;
+      padding: 8px 12px;
       margin-bottom: 8px;
-      padding-left: 28px;
+      border-radius: 4px;
+      z-index: 3;
       @include transition();
       &:hover,
       &--active {
-        background-color: pink;
+        background-color: #1d1f29;
       }
     }
+  }
+  a {
+    position: fixed;
+    bottom: 100px;
+    color: lightblue;
   }
 }

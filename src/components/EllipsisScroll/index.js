@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react"
+import "./style.scss"
 
 export const EllipsisScroll = (props) => {
   const itemContainerRef = useRef()
