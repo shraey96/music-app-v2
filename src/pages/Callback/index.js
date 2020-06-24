@@ -12,8 +12,12 @@ const Callback = ({ match, history }) => {
     if (params.service === "spotify") {
       const spotifyCode = getQueryParams(window.location.href, "code")
       if (spotifyCode) {
+        // send via broadcast to parent
         getSpotifyToken(spotifyCode).then(() => history.push("/home"))
       }
+    }
+    if (!params.service || params.service === "soundcloud") {
+      window.setTimeout(window.opener.SC.connectCallback, 2)
     }
   }, [])
   return <></>

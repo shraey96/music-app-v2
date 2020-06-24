@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
 
 import { useSelector, useDispatch } from "react-redux"
 
 import { motion } from "framer-motion"
 
 import { BroadcastChannel } from "broadcast-channel"
+
+import { EllipsisScroll } from "components"
 
 import {
   playTrack,
@@ -28,6 +30,8 @@ export const AudioPlayer = () => {
 
   const timerContainerRef = useRef(null)
   const audioTagRef = useRef(null)
+
+  const prevPlayerTrackId = useRef(null)
 
   const checkSpotify = () => {
     const storageSpotifyToken = JSON.parse(
@@ -60,10 +64,13 @@ export const AudioPlayer = () => {
     const { currentTrack } = playerState
 
     if (currentTrack.service === "spotify") {
-      playSpotifyTrack({
-        spotify_uri: `spotify:track:${currentTrack.trackId}`,
-        playerInstance: window.spotifyPlayer,
-      })
+      if (prevPlayerTrackId.current !== currentTrack.trackId) {
+        playSpotifyTrack({
+          spotify_uri: `spotify:track:${currentTrack.trackId}`,
+          playerInstance: window.spotifyPlayer,
+        })
+        prevPlayerTrackId.current = currentTrack.trackId
+      }
     }
   }, [
     playerState.currentTrack.service,
@@ -98,6 +105,22 @@ export const AudioPlayer = () => {
         console.log(44, trackState)
 
         dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
+        const currentTrack = trackState.track_window.current_track
+        if (prevPlayerTrackId.current !== currentTrack.id) {
+          const trackPayload = {
+            service: "spotify",
+            trackId: currentTrack.id,
+            trackInfo: currentTrack,
+          }
+          dispatch(
+            playTrack({
+              isAudioPlaying: false,
+              trackPayload,
+              trackIndex: 0,
+              playQueue: [trackPayload],
+            })
+          )
+        }
       })
 
       // Ready
@@ -116,18 +139,22 @@ export const AudioPlayer = () => {
       const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
       spotifyChannel.onmessage = (msg) => {
         if (msg.type === "playTrack") {
-          dispatch(
-            playTrack({
-              isAudioPlaying: false,
-              trackPayload: {
-                service: "spotify",
-                trackId: msg.trackId,
-                trackInfo: msg.trackInfo,
-              },
-              trackIndex: msg.trackIndex,
-              playQueue: msg.playQueue,
-            })
-          )
+          if (prevPlayerTrackId.current === msg.trackId) {
+            window.spotifyPlayer.togglePlay()
+          } else {
+            dispatch(
+              playTrack({
+                isAudioPlaying: false,
+                trackPayload: {
+                  service: "spotify",
+                  trackId: msg.trackId,
+                  trackInfo: msg.trackInfo,
+                },
+                trackIndex: msg.trackIndex,
+                playQueue: msg.playQueue,
+              })
+            )
+          }
         }
         if (msg.type === "togglePlayPause") {
           // handlePlayPause()
@@ -154,13 +181,17 @@ export const AudioPlayer = () => {
 
   const handlePlayPause = () => {
     const { currentTrack, isAudioPlaying } = playerState
-
-    dispatch(toggleAudioPlay({ isAudioPlaying: !isAudioPlaying }))
     if (currentTrack.service === "spotify") {
       window.spotifyPlayer.togglePlay()
     }
     if (currentTrack.service === "soundcloud") {
-      isAudioPlaying ? audioTagRef.current.pause() : audioTagRef.current.play()
+      if (isAudioPlaying) {
+        audioTagRef.current.pause()
+        dispatch(toggleAudioPlay({ isAudioPlaying: false }))
+      } else {
+        audioTagRef.current.play()
+        dispatch(toggleAudioPlay({ isAudioPlaying: true }))
+      }
     }
   }
 
@@ -175,7 +206,7 @@ export const AudioPlayer = () => {
     isShuffleMode,
   } = playerState
 
-  console.log(111, playerState)
+  console.log(111, playerState, prevPlayerTrackId.current)
   return (
     <>
       <motion.div
@@ -186,13 +217,19 @@ export const AudioPlayer = () => {
       >
         <div className="audio-player__container">
           <div className="audio-player__container__meta">
-            <img
+            <motion.img
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              key={getTrackInfo().trackId}
               src={currentTrack.trackId ? getTrackInfo().cover : ""}
               alt=""
             />
             <div className="info">
-              <p className="title text-ellipsis">{getTrackInfo().title}</p>
-              <p className="artists text-ellipsis">{getTrackInfo().artists}</p>
+              <EllipsisScroll classNames="title" text={getTrackInfo().title} />
+              <EllipsisScroll
+                classNames="artists"
+                text={getTrackInfo().artists}
+              />
             </div>
           </div>
           <div className="audio-player__container__controls">

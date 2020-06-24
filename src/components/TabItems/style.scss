@@ -2,15 +2,19 @@
 .tabs-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  // justify-content: center;
+  justify-content: space-between;
   position: sticky;
   top: 0;
-  color: wheat;
+  color: $text-color;
   z-index: 999;
-
   margin-top: 20px;
+  margin-left: -40px;
+  margin-right: -40px;
+
   .tab-items-container {
     margin-bottom: 20px;
+    margin-left: 40px;
     position: relative;
     .tab-item {
       cursor: pointer;
@@ -27,5 +31,8 @@
       width: 140px;
       @include transition();
     }
+  }
+  .search-box-container {
+    margin-right: 40px;
   }
 }

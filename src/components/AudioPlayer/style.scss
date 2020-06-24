@@ -82,9 +82,9 @@
       }
     }
     &__side {
-      // &__timer {
-      //   margin-right: 24px;
-      // }
+      &__timer {
+        margin-right: 20px;
+      }
       @include flexAlignCenter();
       .side-controls {
         @include flexAlignCenter();

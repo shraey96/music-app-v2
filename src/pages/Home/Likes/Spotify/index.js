@@ -1,15 +1,19 @@
 import React from "react"
 import { useSelector } from "react-redux"
 import { useInfiniteScroll } from "Hooks/useInfiniteScroll"
-import { TrackItem } from "components"
+import { TrackItem, InputBox } from "components"
 
 import { playSpotifyTrackComponent } from "utils/spotifyHelpers"
 
-export const SpotifyLikes = () => {
+export const SpotifyLikes = ({ searchVal }) => {
   const spotifyLikes = useSelector((state) => state.user.spotifyLikes)
-  const spotifyLikesArray = Object.values(spotifyLikes || {})
+  const spotifyLikesArray = Object.values(spotifyLikes || {}).filter((t) =>
+    t.name.toLowerCase().includes(searchVal.toLowerCase())
+  )
+  console.log(222, spotifyLikesArray)
   const { reqData = [] } = useInfiniteScroll({
     data: spotifyLikesArray,
+    searchTerm: searchVal,
   })
 
   const playTrack = (index, track) => {
@@ -21,6 +25,8 @@ export const SpotifyLikes = () => {
       trackInfo: track,
     })
   }
+
+  // console.log(111, reqData)
 
   return (
     <>

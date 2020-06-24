@@ -1,0 +1,51 @@
+@import "../../base.scss";
+.search-box {
+  background: #353535;
+  padding: 10px;
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.search-input {
+  background: #353535;
+  color: $text-color;
+  outline: none;
+  border: none;
+  width: 0px;
+  float: left;
+  font-size: 14px;
+  transition: 0.7s ease;
+  font-family: sans-serif;
+}
+.search-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  background: #353535;
+  border-radius: 50%;
+
+  transition: 0.4s ease;
+  height: 24px;
+  width: 24px;
+  svg {
+    height: 18px;
+    width: 18px;
+    fill: #ff5722;
+  }
+}
+.search-box:hover > .search-input {
+  width: 240px;
+  margin: 0px 8px;
+}
+.search-input:focus {
+  width: 240px;
+  margin: 0px 8px;
+}
+.search-box:hover > .search-btn {
+  background: $text-color;
+}
+.search-input:focus + .search-btn {
+  background: $text-color;
+}

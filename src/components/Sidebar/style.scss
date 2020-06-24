@@ -1,18 +1,33 @@
 @import "../../base.scss";
 .sidebar {
-  box-shadow: 0px 3px 46px #00000029;
   width: 280px;
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   padding: 20px 0;
-  background-color: #2e3038;
+  // background-color: #2e3038;
+  // background-color: #111017;
+  background-color: #131621;
   color: $text-color;
   @include transition();
+  button {
+    position: fixed;
+    bottom: 130px;
+  }
   &--minimized {
     width: 80px;
     overflow: hidden;
+  }
+  .gradient-box {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    height: 50%;
+    width: 80%;
+    filter: blur(30px);
+    opacity: 0.333;
+    z-index: -1;
   }
   &__items-container {
     height: calc(100% - 70px);
@@ -46,7 +61,8 @@
     &__items-container {
       position: absolute;
       left: 70px;
-      top: 10px;
+      // top: 10px;
+      top: 0;
       width: calc(100% - 90px);
       z-index: 99;
       @include transition();

@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { SIDEBAR_ITEMS } from "utils/constants"
 
 import { SPOTIFY_LOGIN_LINK } from "utils/spotifyHelpers"
+import { setSoundCloudTokenHeader } from "utils/soundcloudHelpers"
 
 import { ICONS } from "iconConstants"
 
@@ -16,6 +17,12 @@ export const Sidebar = () => {
   const [selectedTab, toggleSelectedTab] = useState("music")
   const history = useHistory()
   const { section } = useParams()
+
+  const handleSoundCloudAuth = () => {
+    window.SC.connect().then((scAuth) => {
+      setSoundCloudTokenHeader(scAuth.oauth_token)
+    })
+  }
 
   useEffect(() => {
     const appHomeDOM = document.querySelector(".music-app-home")
@@ -40,6 +47,21 @@ export const Sidebar = () => {
         >
           {ICONS.BACK}
         </span>
+        <motion.div
+          initial={{
+            background: `linear-gradient(135deg, rgba(0, 162, 255, 0.4) 0%, rgba(17, 16, 23, 0.4) 100%)`,
+          }}
+          animate={{
+            background:
+              selectedTab === "music"
+                ? `linear-gradient(135deg, rgba(0, 162, 255, 0.4) 0%, rgba(17, 16, 23, 0.4) 100%)
+        `
+                : selectedTab === "spotify"
+                ? `linear-gradient(133.64deg, rgba(31, 234, 112, 0.4) 0%, rgba(17, 16, 23, 0.4) 100%)`
+                : `linear-gradient(135deg, rgba(255, 98, 9, 0.4) 0%, rgba(17, 16, 23, 0.4) 100%)`,
+          }}
+          className="gradient-box"
+        />
         {Object.keys(SIDEBAR_ITEMS).map((k, l) => {
           const reqItem = SIDEBAR_ITEMS[k]
           const isSelected = reqItem.value === selectedTab
@@ -115,6 +137,7 @@ export const Sidebar = () => {
         })}
       </div>
       <a href={SPOTIFY_LOGIN_LINK}>Login Spotify</a>
+      <button onClick={() => handleSoundCloudAuth()}>Login SoundCloud</button>
     </div>
   )
 }

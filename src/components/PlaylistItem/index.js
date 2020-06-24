@@ -72,13 +72,13 @@ export const PlaylistItem = ({
           type: "spring",
           stiffness: 50,
         }}
-        className={`playlist-item playlist-item--spotify`}
+        className={`playlist-item playlist-item--spotify `}
         onClick={() => !isSelected && setSelectedCard()}
       >
         <div
           className={`playlist-item__content-container ${
             isSelected && "playlist-item__content-container--open"
-          }`}
+          } ${!isSelected && "playlist-item__content-container--with-hover"}`}
         >
           <motion.div
             className="card-content"
@@ -97,9 +97,7 @@ export const PlaylistItem = ({
                   <img
                     src={playlistInfo.images[0].url}
                     alt=""
-                    className={`playlist-item__cover ${
-                      !isSelected && "playlist-item__cover--with-hover"
-                    }`}
+                    className={`playlist-item__cover`}
                   />
                   {isSelected && playlistTracks.length > 0 && (
                     <button

@@ -1,6 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 import { Switch, Route } from "react-router-dom"
-import { TabItems } from "components"
+import { TabItems, InputBox } from "components"
 import { SpotifyLikes } from "./Spotify"
 
 const tabItems = [
@@ -15,13 +15,19 @@ const tabItems = [
 ]
 
 export const Likes = () => {
+  const [searchVal, setSearchVal] = useState("")
   return (
     <>
       <TabItems tabs={tabItems} />
+      <InputBox
+        portalRef={document.querySelector(".search-box-container")}
+        value={searchVal}
+        onChange={(e) => setSearchVal(e.target.value)}
+      />
       <div className="music-app-home__container__likes">
         <Switch>
           <Route exact path="/home/likes/spotify">
-            <SpotifyLikes />
+            <SpotifyLikes searchVal={searchVal} />
           </Route>
         </Switch>
       </div>

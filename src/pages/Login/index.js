@@ -20,7 +20,7 @@ const Login = () => {
     setAppAccessToken({ access_token, refresh_token })
     dispatch(
       setUserLogin({
-        userInfo: { email: payload.email, services: ["spotify"] },
+        userInfo: { email: payload.email, services: ["spotify", "soundcloud"] },
       })
     )
   }

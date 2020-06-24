@@ -15,11 +15,14 @@ export const TrackItem = ({ trackInfo, playTrack, index }) => {
       className={`track-item track-item--${trackInfo.trackType}`}
       onClick={() => playTrack && playTrack(trackInfo.uri)}
     >
-      <img
-        src={trackInfo.album.images[0].url}
-        alt=""
-        className="track-item__cover"
-      />
+      <div className="img-container">
+        <img
+          src={trackInfo.album.images[0].url}
+          alt=""
+          className="track-item__cover"
+        />
+      </div>
+
       <EllipsisScroll classNames="track-item__title" text={trackInfo.name} />
     </motion.div>
   )

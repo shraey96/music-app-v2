@@ -15,6 +15,11 @@ import {
   getSpotifyPlaylists,
 } from "utils/spotifyHelpers"
 
+import {
+  checkSoundCloudAccessToken,
+  setSoundCloudTokenHeader,
+} from "utils/soundcloudHelpers"
+
 import "./style.scss"
 
 const Home = (props) => {
@@ -43,6 +48,14 @@ const Home = (props) => {
         )
       })
     }
+
+    if (userInfo.services.includes("soundcloud")) {
+      const token = checkSoundCloudAccessToken()
+      setSoundCloudTokenHeader(token)
+      console.log("hasss")
+      // getSCUserLikedTracks(183)
+    }
+
     props.history.push("/home/likes/spotify")
     setTokenLoader(false)
   }, [])

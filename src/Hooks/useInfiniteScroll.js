@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { paginateArray } from "utils/helpers"
 
 export const useInfiniteScroll = ({ data = [], type }) => {
   const dataCopy = [...(data || [])]
-
+  const dataLen = useRef(dataCopy.length)
   const [reqData, setReqData] = useState([])
   const [isFetching, setIsFetching] = useState(false)
   const [hasNext, setHasNext] = useState(true)
@@ -17,6 +17,7 @@ export const useInfiniteScroll = ({ data = [], type }) => {
 
   useEffect(() => {
     managePagination()
+    // setReqData([])
   }, [data.length])
 
   useEffect(() => {
@@ -45,6 +46,6 @@ export const useInfiniteScroll = ({ data = [], type }) => {
       }
     }
   }
-
+  // console.log(202020, reqData)
   return { reqData }
 }

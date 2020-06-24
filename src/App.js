@@ -2,6 +2,11 @@ import React, { useState, useEffect, Suspense } from "react"
 import { useSelector } from "react-redux"
 import { withRouter, Route } from "react-router-dom"
 
+import {
+  SOUNDCLOUD_CLIENT_ID,
+  SOUNDCLOUD_REDIRECT_URL,
+} from "utils/soundcloudHelpers"
+
 import "./base.scss"
 
 const Login = React.lazy(() => import("pages/Login"))
@@ -12,6 +17,13 @@ const Callback = React.lazy(() => import("pages/Callback"))
 
 const App = (props) => {
   const [loader, toggleLoader] = useState(false)
+
+  useEffect(() => {
+    window.SC.initialize({
+      client_id: SOUNDCLOUD_CLIENT_ID,
+      redirect_uri: SOUNDCLOUD_REDIRECT_URL,
+    })
+  }, [])
 
   const userStore = useSelector((state) => state.user)
   const isUserAuthAndServices =
@@ -31,7 +43,7 @@ const App = (props) => {
             <Home userStore={userStore} />
           </Route>
         )}
-        <Route exact path="/callback/:service">
+        <Route exact path="/callback/:service?">
           <Callback />
         </Route>
       </Suspense>
