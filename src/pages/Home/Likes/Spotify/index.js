@@ -10,7 +10,7 @@ export const SpotifyLikes = ({ searchVal }) => {
   const spotifyLikesArray = Object.values(spotifyLikes || {}).filter((t) =>
     t.name.toLowerCase().includes(searchVal.toLowerCase())
   )
-  console.log(222, spotifyLikesArray)
+  // console.log(222, spotifyLikesArray)
   const { reqData = [] } = useInfiniteScroll({
     data: spotifyLikesArray,
     searchTerm: searchVal,

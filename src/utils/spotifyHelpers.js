@@ -2,7 +2,11 @@ import axios from "axios"
 
 import { BroadcastChannel } from "broadcast-channel"
 
-const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
+import store from "redux-app/store"
+
+import { addUserMusicService } from "redux-app/actions"
+
+const spotifyChannel = new BroadcastChannel("SPOTIFY_CHANNEL")
 
 const SPOTIFY_CLIENT_ID = `28bc6211497a4a93a51866c234ed3e40`
 const SPOTIFY_SCOPES = `scope=playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify streaming`
@@ -165,7 +169,24 @@ const spotifyTrackTimeConvertor = (mil) => {
   return minutes + ":" + (seconds < 10 ? "0" : "") + seconds
 }
 
+const loginSpotify = () => {
+  const newwindow = window.open(
+    SPOTIFY_LOGIN_LINK,
+    "name",
+    "height=700,width=420"
+  )
+  if (window.focus) {
+    newwindow.focus()
+  }
+  return false
+}
+
+window.updateSpotifyLogin = () => {
+  store.dispatch(addUserMusicService({ service: "spotify" }))
+}
+
 export {
+  loginSpotify,
   getSpotifyLikes,
   getSpotifyToken,
   checkSpotifyToken,

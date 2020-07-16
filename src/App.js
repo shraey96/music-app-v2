@@ -1,11 +1,13 @@
 import React, { useState, useEffect, Suspense } from "react"
 import { useSelector } from "react-redux"
-import { withRouter, Route } from "react-router-dom"
+import { useHistory, Route } from "react-router-dom"
 
 import {
   SOUNDCLOUD_CLIENT_ID,
   SOUNDCLOUD_REDIRECT_URL,
 } from "utils/soundcloudHelpers"
+
+import { WelcomeScreen } from "components"
 
 import "./base.scss"
 
@@ -16,28 +18,38 @@ const Home = React.lazy(() => import("pages/Home"))
 const Callback = React.lazy(() => import("pages/Callback"))
 
 const App = (props) => {
-  const [loader, toggleLoader] = useState(false)
+  const history = useHistory()
+  const [showWelcomeScreen, toggleShowWelcomeScreen] = useState(false)
+  const userStore = useSelector((state) => state.user)
+  const isUserAuthAndServices = userStore.userInfo.services.length > 0
 
   useEffect(() => {
     window.SC.initialize({
       client_id: SOUNDCLOUD_CLIENT_ID,
       redirect_uri: SOUNDCLOUD_REDIRECT_URL,
     })
+
+    if (isUserAuthAndServices) {
+      history.push("/home")
+    }
+
+    if (!isUserAuthAndServices) {
+      toggleShowWelcomeScreen(true)
+    }
   }, [])
 
-  const userStore = useSelector((state) => state.user)
-  const isUserAuthAndServices =
-    userStore.userAuth && userStore.userInfo.services.length > 0
   // const isUserAuthAndServices = userStore.userAuth
 
-  if (isUserAuthAndServices && !props.location.pathname.includes("/home")) {
-    // props.history.push("/home")
-  }
   return (
     <div className="music-app-container">
       <Suspense fallback={<></>}>
-        {!isUserAuthAndServices ? (
-          <Login userStore={userStore} />
+        {showWelcomeScreen ? (
+          <WelcomeScreen
+            proceed={() => {
+              history.push("/home")
+              toggleShowWelcomeScreen(false)
+            }}
+          />
         ) : (
           <Route exact path="/home/:section?/:service?">
             <Home userStore={userStore} />
@@ -51,4 +63,4 @@ const App = (props) => {
   )
 }
 
-export default withRouter(App)
+export default App

@@ -5,7 +5,14 @@ import { EllipsisScroll } from "components"
 import "./style.scss"
 
 export const TrackItem = ({ trackInfo, playTrack, index }) => {
-  const artists = trackInfo.artists.map((a) => a.name).join(", ")
+  const trackType =
+    trackInfo.uri && trackInfo.uri.includes("soundcloud")
+      ? "soundcloud"
+      : "spotify"
+  const artists =
+    trackType === "soundcloud"
+      ? trackInfo.user.username
+      : trackInfo.artists.map((a) => a.name).join(", ")
 
   return (
     <motion.div
@@ -17,13 +24,23 @@ export const TrackItem = ({ trackInfo, playTrack, index }) => {
     >
       <div className="img-container">
         <img
-          src={trackInfo.album.images[0].url}
+          src={
+            trackType === "soundcloud"
+              ? (trackInfo.artwork_url || trackInfo.user.avatar_url).replace(
+                  "large.jpg",
+                  "t500x500.jpg"
+                )
+              : trackInfo.album.images[0].url
+          }
           alt=""
           className="track-item__cover"
         />
       </div>
 
-      <EllipsisScroll classNames="track-item__title" text={trackInfo.name} />
+      <EllipsisScroll
+        classNames="track-item__title"
+        text={trackInfo.name || trackInfo.title}
+      />
     </motion.div>
   )
 }

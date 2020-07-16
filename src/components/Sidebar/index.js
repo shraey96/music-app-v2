@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 import { SIDEBAR_ITEMS } from "utils/constants"
 
 import { SPOTIFY_LOGIN_LINK } from "utils/spotifyHelpers"
-import { setSoundCloudTokenHeader } from "utils/soundcloudHelpers"
+import { loginSoundcloud } from "utils/soundcloudHelpers"
 
 import { ICONS } from "iconConstants"
 
@@ -19,9 +19,45 @@ export const Sidebar = () => {
   const { section } = useParams()
 
   const handleSoundCloudAuth = () => {
-    window.SC.connect().then((scAuth) => {
-      setSoundCloudTokenHeader(scAuth.oauth_token)
+    loginSoundcloud().then(() => {
+      // window.SC.get("/me")
+      // window.SC.get("/me/favorites?limit=200&linked_partitioning=1")
+      // window.SC.stream(`/tracks/243895680`)
+      // window.SC.stream("/tracks/53875317").then(function (player) {
+      //   console.log(234, player)
+      //   player
+      //     .play()
+      //     .then(function () {
+      //       console.log("Playback started!")
+      //     })
+      //     .catch(function (e) {
+      //       console.error(
+      //         "Playback rejected. Try calling play() from a user interaction.",
+      //         e
+      //       )
+      //     })
+      // })
     })
+    // window.SC.connect().then((scAuth) => {
+    //   setSoundCloudTokenHeader(scAuth.oauth_token)
+    //   // window.SC.get("/me")
+    //   // window.SC.get("/me/favorites?limit=200&linked_partitioning=1")
+    //   // window.SC.stream(`/tracks/243895680`)
+    //   // window.SC.stream("/tracks/53875317").then(function (player) {
+    //   //   console.log(234, player)
+    //   //   player
+    //   //     .play()
+    //   //     .then(function () {
+    //   //       console.log("Playback started!")
+    //   //     })
+    //   //     .catch(function (e) {
+    //   //       console.error(
+    //   //         "Playback rejected. Try calling play() from a user interaction.",
+    //   //         e
+    //   //       )
+    //   //     })
+    //   // })
+    // })
   }
 
   useEffect(() => {
@@ -38,6 +74,14 @@ export const Sidebar = () => {
 
   return (
     <div className={`sidebar ${isMinimized && "sidebar--minimized"}`}>
+      {/* <audio
+        preload="metadata"
+        src={
+          "https://cf-hls-media.sndcdn.com/media/1436524/1596184/HqmoUU9NX7Fk.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiKjovL2NmLWhscy1tZWRpYS5zbmRjZG4uY29tL21lZGlhLyovKi9IcW1vVVU5Tlg3RmsuMTI4Lm1wMyIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTU5MzM0NTI4OX19fV19&Signature=GEW~o38xci~p6HM2fcmzCAe71e2jSrd5MY3aHBm4wgGkyv8d2oKbwI9L9JC06FMqOsKMgq6UJu0CaYbsc9~FuFJ3EmO~FDsR5O2jDYHxXsZ1~4mFCb7Fc4KQFWHJlvoD1o6zMUrdvdAA80dFPJ09fbq1Iwg5F6XvQTuYDAXblZGBbtEMj5A5lwZ-DtdrXt0Cc56mraRcqoQ4HwORrhrOouWKrLJlOtuhfx27~yjbie0Sp6swmm2Fc4JxgmOnwqgL5byvztWFOBKm3jai2mw4iqdfqCQb0Pd2lwYB0mbY-v3dXNTLQ8dbtkNbyhPlIsrvrZ1WvgYc34PUgDRSxJiWhA__&Key-Pair-Id=APKAI6TU7MMXM5DG6EPQ"
+        }
+        controls
+        type="audio/mpeg"
+      /> */}
       <div className="sidebar__items-container">
         <span
           className={`minimize-toggle ${

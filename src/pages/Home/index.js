@@ -6,18 +6,26 @@ import { AudioPlayer, Sidebar } from "components"
 import { Likes } from "./Likes"
 import { Playlists } from "./Playlists"
 
-import { setSpotifyLikes, setSpotifyPlaylists } from "redux-app/actions"
+import {
+  setSpotifyLikes,
+  setSpotifyPlaylists,
+  setSoundcloudLikes,
+  setSoundcloudPlaylists,
+} from "redux-app/actions"
 
 import {
-  checkSpotifyToken,
   setSpotifyAccessToken,
   getSpotifyLikes,
   getSpotifyPlaylists,
+  checkSpotifyToken,
 } from "utils/spotifyHelpers"
 
 import {
   checkSoundCloudAccessToken,
   setSoundCloudTokenHeader,
+  getSCMeLikedTracks,
+  getPlaylistLikedExp,
+  getPlaylistMe,
 } from "utils/soundcloudHelpers"
 
 import "./style.scss"
@@ -30,30 +38,57 @@ const Home = (props) => {
     const { userInfo } = props.userStore
     if (userInfo.services.includes("spotify")) {
       const token = checkSpotifyToken()
-      setSpotifyAccessToken(token)
 
-      getSpotifyLikes().then((likes) =>
-        dispatch(
-          setSpotifyLikes({
-            spotifyLikes: likes,
-          })
-        )
-      )
+      if (token) {
+        setSpotifyAccessToken(token)
 
-      getSpotifyPlaylists().then((playlists) => {
-        dispatch(
-          setSpotifyPlaylists({
-            spotifyPlaylists: playlists,
-          })
+        getSpotifyLikes().then((likes) =>
+          dispatch(
+            setSpotifyLikes({
+              spotifyLikes: likes,
+            })
+          )
         )
-      })
+
+        getSpotifyPlaylists().then((playlists) => {
+          dispatch(
+            setSpotifyPlaylists({
+              spotifyPlaylists: playlists,
+            })
+          )
+        })
+      } else {
+        // dispatch error for token
+      }
     }
 
     if (userInfo.services.includes("soundcloud")) {
       const token = checkSoundCloudAccessToken()
-      setSoundCloudTokenHeader(token)
-      console.log("hasss")
-      // getSCUserLikedTracks(183)
+      if (token) {
+        setSoundCloudTokenHeader(token)
+        getSCMeLikedTracks().then((likes) => {
+          console.log(2345, likes)
+          dispatch(
+            setSoundcloudLikes({
+              soundcloudLikes: likes,
+            })
+          )
+        })
+        const uid = token.split("-")[2]
+        Promise.all([getPlaylistMe(uid), getPlaylistLikedExp(uid)]).then(
+          ([d1, d2]) => {
+            const combinedList = [...d2.data.map((p) => p.playlist), d1.data[0]]
+
+            dispatch(
+              setSoundcloudPlaylists({
+                soundcloudPlaylists: combinedList,
+              })
+            )
+          }
+        )
+      } else {
+        // dispatch error for token
+      }
     }
 
     props.history.push("/home/likes/spotify")

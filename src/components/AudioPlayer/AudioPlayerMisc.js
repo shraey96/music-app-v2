@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react"
 import ReactDOM from "react-dom"
 
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 import { formatAudioTime } from "utils/helpers"
 
 import { ICONS } from "iconConstants"
+import { toggleAudioPlay } from "redux-app/actions"
 
 export const QueueView = () => {
   const [isQueueViewOpen, toggleQueueView] = useState(false)
@@ -59,13 +60,16 @@ export const VolumeSlider = () => {
   }
 
   const toggleAudioTagVolume = (type, volume) => {
-    const audioTag = document.querySelector("#player-audio-tag")
+    const audioTag = document.querySelector("#player_audio_tag")
+
     if (audioTag) {
       if (type === "get") return audioTag.volume
       if (type === "set") audioTag.volume = volume
     }
     return 0
   }
+
+  console.log(`currentVolume ===> `, currentVolume)
 
   return (
     <div className="volume-container">
@@ -99,6 +103,7 @@ export const Timer = (props) => {
     service,
     portalRef,
     onTrackEnd,
+    onAudioTagStatusChange,
   } = props
   const [currentTime, setCurrentTime] = useState(0)
   const [timerInterval, setTimerInterval] = useState(null)
@@ -154,41 +159,62 @@ export const Timer = (props) => {
     setCurrentTime(val)
   }
 
+  const dispatch = useDispatch()
+
   return ReactDOM.createPortal(
-    <div className="timer-container">
-      <input
-        type="range"
-        className="timer-container__slider"
-        min={0}
-        max={duration}
-        value={currentTime}
-        step={1}
-        onChange={(e) => {
-          updateTimer(parseInt(e.target.value, 10))
-          if (service === "spotify") {
-            //
-          }
-          if (service === "soundcloud") {
-            //
-          }
+    <>
+      <div className="timer-container">
+        <input
+          type="range"
+          className="timer-container__slider"
+          min={0}
+          max={duration}
+          value={currentTime}
+          step={1}
+          onChange={(e) => {
+            updateTimer(parseInt(e.target.value, 10))
+            if (service === "spotify") {
+              //
+            }
+            if (service === "soundcloud") {
+              //
+            }
+          }}
+          onMouseUp={(e) => {
+            const ms = parseInt(e.target.value, 10) * 1000
+            if (service === "spotify" && window.spotifyPlayer) {
+              window.spotifyPlayer
+                .seek(ms)
+                .then(() => updateTimer(e.target.value))
+                .catch((err) => console.log(111))
+            }
+          }}
+        />
+        <span className="timer-container__current-time">
+          {formatAudioTime(currentTime)}
+        </span>
+        <span className="timer-container__duration">
+          {formatAudioTime(duration || 0)}
+        </span>
+      </div>
+      <audio
+        id="player_audio_tag"
+        style={{ display: "none" }}
+        //   onEnded={e => {
+        //     seekTrack('next')
+        // }}
+        onPlay={(e) => {
+          console.log("PLAYYY")
+          dispatch(toggleAudioPlay({ isAudioPlaying: true }))
+          onAudioTagStatusChange && onAudioTagStatusChange()
         }}
-        onMouseUp={(e) => {
-          const ms = parseInt(e.target.value, 10) * 1000
-          if (service === "spotify" && window.spotifyPlayer) {
-            window.spotifyPlayer
-              .seek(ms)
-              .then(() => updateTimer(e.target.value))
-              .catch((err) => console.log(111))
-          }
+        onPause={(e) => {
+          console.log("PAUSE")
+          dispatch(toggleAudioPlay({ isAudioPlaying: false }))
+          onAudioTagStatusChange && onAudioTagStatusChange()
         }}
       />
-      <span className="timer-container__current-time">
-        {formatAudioTime(currentTime)}
-      </span>
-      <span className="timer-container__duration">
-        {formatAudioTime(duration || 0)}
-      </span>
-    </div>,
+    </>,
     portalRef.current
   )
 }

@@ -26,6 +26,29 @@ const toggleShuffle = (isShuffleMode) => {
   }
 }
 
+const setSoundcloudLikes = (payload) => {
+  return {
+    type: "SET_SOUNDCLOUD_LIKES",
+    soundcloudLikes: payload.soundcloudLikes,
+  }
+}
+
+const setSoundcloudPlaylists = (payload) => {
+  console.log(6666, payload)
+  return {
+    type: "SET_SOUNDCLOUD_PLAYLISTS",
+    soundcloudPlaylists: payload.soundcloudPlaylists,
+  }
+}
+
+const updateSoundcloudLikes = (payload) => {
+  return {
+    type: "UPDATE_SOUNDCLOUD_LIKES",
+    action: payload.action || "add",
+    track: payload.track,
+  }
+}
+
 const setSpotifyLikes = (payload) => {
   return {
     type: "SET_SPOTIFY_LIKES",
@@ -55,6 +78,13 @@ const setUserLogin = (payload) => {
   }
 }
 
+const addUserMusicService = (payload) => {
+  return {
+    type: "ADD_USER_SERVICE",
+    service: payload.service,
+  }
+}
+
 export {
   playTrack,
   toggleAudioPlay,
@@ -64,4 +94,9 @@ export {
   setSpotifyPlaylists,
   updateSpotifyLikes,
   setUserLogin,
+  addUserMusicService,
+  //
+  setSoundcloudLikes,
+  setSoundcloudPlaylists,
+  updateSoundcloudLikes,
 }

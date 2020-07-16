@@ -66,7 +66,7 @@ const playerReducer = (state = playerInitialState, action) => {
       const newTrack = state.playQueue[trackIndexNew]
       const currentTrackNew = {
         service: newTrack.trackType,
-        trackId: newTrack.trackType === "spotify" ? newTrack.id : 0,
+        trackId: newTrack.trackType === "spotify" ? newTrack.id : newTrack.id,
         trackInfo: newTrack,
       }
 
@@ -102,7 +102,7 @@ const userInitialState = {
   spotifyLikes: {},
   spotifyPlaylists: [],
   soundcloudLikes: {},
-  soundcloudPlaylist: [],
+  soundcloudPlaylists: [],
 }
 
 const userReducer = (state = userInitialState, action) => {
@@ -116,11 +116,29 @@ const userReducer = (state = userInitialState, action) => {
         ...action.payload,
       }
 
+    case "ADD_USER_SERVICE":
+      console.log(222, action)
+      const allServices = [...state.userInfo.services, action.service]
+      const userInfo = { ...state.userInfo, services: allServices }
+      console.log(userInfo)
+      localStorageSetter("app_userInfo", JSON.stringify(userInfo))
+      return {
+        ...state,
+        userAuth: true,
+        userInfo,
+      }
+
     case "SET_SPOTIFY_LIKES":
       return { ...state, spotifyLikes: action.spotifyLikes }
 
     case "SET_SPOTIFY_PLAYLISTS":
       return { ...state, spotifyPlaylists: action.spotifyPlaylists }
+
+    case "SET_SOUNDCLOUD_LIKES":
+      return { ...state, soundcloudLikes: action.soundcloudLikes }
+
+    case "SET_SOUNDCLOUD_PLAYLISTS":
+      return { ...state, soundcloudPlaylist: action.soundcloudPlaylists }
 
     case "UPDATE_SPOTIFY_LIKES":
       const spotifyLikes = { ...state.spotifyLikes }

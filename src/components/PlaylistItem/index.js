@@ -4,6 +4,7 @@ import * as Vibrant from "node-vibrant"
 import { EllipsisScroll } from "components"
 
 import { getSpotifyPlaylistTracks } from "utils/spotifyHelpers"
+import { getSCPlaylistTracks } from "utils/soundcloudHelpers"
 
 import "./style.scss"
 
@@ -20,39 +21,46 @@ export const PlaylistItem = ({
   const isSelected = index === selectedCard
   const [pallete, setPallete] = useState(null)
   const [loading, toggleLoading] = useState(false)
+  const [hasFetched, toggleHasFetched] = useState(false)
   const [playlistTracks, setPlaylistTracks] = useState([])
 
   const fetchPlaylistTracks = async () => {
     toggleLoading(true)
-    const tracks = await getSpotifyPlaylistTracks(
-      playlistInfo.tracks.href,
-      playlistInfo.id
-    )
+
+    const tracks = await (playlistInfo.title
+      ? getSCPlaylistTracks(playlistInfo.id)
+      : getSpotifyPlaylistTracks(playlistInfo.tracks.href, playlistInfo.id))
+
     if (tracks) {
       setPlaylistTracks(tracks)
     }
+
+    hasFetched(true)
     toggleLoading(false)
   }
 
   const handlePlaylistPlay = (index = 0) => {
-    console.log("handle playlist play")
     playTrack(index, playlistTracks[index], playlistTracks)
   }
 
   useEffect(() => {
-    Vibrant.from(
-      `https://cryptic-ravine-67258.herokuapp.com/` + playlistInfo.images[0].url
-    )
+    const imgURL = playlistInfo.images
+      ? playlistInfo.images[0].url
+      : (playlistInfo.artwork_url || playlistInfo.user.avatar_url).replace(
+          "large.jpg",
+          "t500x500.jpg"
+        )
+    Vibrant.from(`https://cryptic-ravine-67258.herokuapp.com/` + imgURL)
       .getPalette()
       .then((pallete) => setPallete(pallete))
       .catch((err) => setPallete(null))
   }, [])
 
   useEffect(() => {
-    if (isSelected && playlistTracks.length === 0) {
+    if (isSelected && playlistTracks.length === 0 && !hasFetched) {
       fetchPlaylistTracks()
     }
-  }, [isSelected, playlistTracks])
+  }, [isSelected, playlistTracks, hasFetched])
 
   const bgPallete =
     pallete || pallete !== null
@@ -61,7 +69,6 @@ export const PlaylistItem = ({
         },0.7) 100%)`
       : "transparent"
 
-  // console.log(222, playlistTracks, playlistInfo)
   return (
     <>
       <motion.div
@@ -95,7 +102,14 @@ export const PlaylistItem = ({
               <div className="card-header">
                 <div className="image-container">
                   <img
-                    src={playlistInfo.images[0].url}
+                    src={
+                      playlistInfo.images
+                        ? playlistInfo.images[0].url
+                        : (
+                            playlistInfo.artwork_url ||
+                            playlistInfo.user.avatar_url
+                          ).replace("large.jpg", "t500x500.jpg")
+                    }
                     alt=""
                     className={`playlist-item__cover`}
                   />
@@ -111,17 +125,22 @@ export const PlaylistItem = ({
                 {!isSelected && (
                   <EllipsisScroll
                     classNames="playlist-item__title"
-                    text={playlistInfo.name}
+                    text={playlistInfo.name || playlistInfo.title}
                   />
                 )}
                 {isSelected && (
                   <>
                     <div className="playlist-full-header">
-                      <p className="playlist-title"> {playlistInfo.name}</p>
+                      <p className="playlist-title">
+                        {" "}
+                        {playlistInfo.name || playlistInfo.title}
+                      </p>
                       <p
                         className="playlist-info"
                         dangerouslySetInnerHTML={{
-                          __html: playlistInfo.description,
+                          __html:
+                            playlistInfo.description ||
+                            playlistInfo.description,
                         }}
                       />
                     </div>
@@ -130,10 +149,23 @@ export const PlaylistItem = ({
               </div>
               {isSelected && (
                 <div className="playlist-tracks">
-                  {loading && <p>Loading...</p>}
+                  {loading && <div className="nb-spinner" />}
                   {playlistTracks.length > 0 &&
-                    playlistTracks.map((p) => {
-                      return <div>{p.name}</div>
+                    playlistTracks.map((p, k) => {
+                      const artists = p.title
+                        ? p.user.username
+                        : p.artists.map((a) => a.name).join(", ")
+
+                      return (
+                        <div
+                          key={p.id}
+                          className="playlist-tracks__item"
+                          onClick={() => handlePlaylistPlay(k)}
+                        >
+                          <div className="track-title">{p.name || p.title}</div>
+                          <div className="track-artist">{artists}</div>
+                        </div>
+                      )
                     })}
                 </div>
               )}

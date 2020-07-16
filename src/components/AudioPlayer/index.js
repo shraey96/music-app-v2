@@ -16,12 +16,15 @@ import {
 } from "redux-app/actions"
 
 import { playSpotifyTrack } from "utils/spotifyHelpers"
+import { getSoundCloudTrackStreamURL } from "utils/soundcloudHelpers"
 
 import { ICONS } from "../../iconConstants"
 
 import { Timer, QueueView, VolumeSlider } from "./AudioPlayerMisc"
 
 import "./style.scss"
+
+const spotifyChannel = new BroadcastChannel("SPOTIFY_CHANNEL")
 
 export const AudioPlayer = () => {
   const userStore = useSelector((state) => state.user)
@@ -64,12 +67,32 @@ export const AudioPlayer = () => {
     const { currentTrack } = playerState
 
     if (currentTrack.service === "spotify") {
+      document.querySelector("#player_audio_tag").pause()
       if (prevPlayerTrackId.current !== currentTrack.trackId) {
+        console.log(666666, currentTrack.trackId)
         playSpotifyTrack({
           spotify_uri: `spotify:track:${currentTrack.trackId}`,
           playerInstance: window.spotifyPlayer,
         })
         prevPlayerTrackId.current = currentTrack.trackId
+      }
+    }
+    if (currentTrack.service === "soundcloud") {
+      window.spotifyPlayer && window.spotifyPlayer.pause()
+      if (prevPlayerTrackId.current !== currentTrack.trackId) {
+        const audioTagDOM = document.querySelector("#player_audio_tag")
+        console.log(9999)
+        if (audioTagDOM) {
+          getSoundCloudTrackStreamURL(currentTrack.trackInfo).then(
+            (streamURL) => {
+              if (streamURL) {
+                audioTagDOM.src = streamURL
+                audioTagDOM.play()
+                prevPlayerTrackId.current = currentTrack.trackId
+              }
+            }
+          )
+        }
       }
     }
   }, [
@@ -102,24 +125,26 @@ export const AudioPlayer = () => {
 
       // Playback status updates
       spotifyPlayer.addListener("player_state_changed", (trackState) => {
-        console.log(44, trackState)
+        console.log(44, trackState, 10101010, playerState)
 
-        dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
-        const currentTrack = trackState.track_window.current_track
-        if (prevPlayerTrackId.current !== currentTrack.id) {
-          const trackPayload = {
-            service: "spotify",
-            trackId: currentTrack.id,
-            trackInfo: currentTrack,
+        if (playerState.currentTrack.service === "spotify") {
+          dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
+          const currentTrack = trackState.track_window.current_track
+          if (prevPlayerTrackId.current !== currentTrack.id) {
+            const trackPayload = {
+              service: "spotify",
+              trackId: currentTrack.id,
+              trackInfo: currentTrack,
+            }
+            dispatch(
+              playTrack({
+                isAudioPlaying: false,
+                trackPayload,
+                trackIndex: 0,
+                playQueue: [trackPayload],
+              })
+            )
           }
-          dispatch(
-            playTrack({
-              isAudioPlaying: false,
-              trackPayload,
-              trackIndex: 0,
-              playQueue: [trackPayload],
-            })
-          )
         }
       })
 
@@ -136,7 +161,6 @@ export const AudioPlayer = () => {
 
       spotifyPlayer.connect()
 
-      const spotifyChannel = new BroadcastChannel("SPOTIFY_PLAY_TRACK")
       spotifyChannel.onmessage = (msg) => {
         if (msg.type === "playTrack") {
           if (prevPlayerTrackId.current === msg.trackId) {
@@ -177,6 +201,19 @@ export const AudioPlayer = () => {
         artists: trackInfo.artists.map((a) => a.name).join(", "),
       }
     }
+    if (service === "soundcloud") {
+      return {
+        trackId: trackId,
+        service: service,
+        cover: (trackInfo.artwork_url || trackInfo.user.avatar_url).replace(
+          "large.jpg",
+          "t500x500.jpg"
+        ),
+        title: trackInfo.title,
+        duration: Math.ceil(trackInfo.duration / 1000), //to covert in seconds//
+        artists: trackInfo.user.username,
+      }
+    }
   }
 
   const handlePlayPause = () => {
@@ -185,12 +222,12 @@ export const AudioPlayer = () => {
       window.spotifyPlayer.togglePlay()
     }
     if (currentTrack.service === "soundcloud") {
+      const audioTagDOM = document.querySelector("#player_audio_tag")
+
       if (isAudioPlaying) {
-        audioTagRef.current.pause()
-        dispatch(toggleAudioPlay({ isAudioPlaying: false }))
+        audioTagDOM.pause()
       } else {
-        audioTagRef.current.play()
-        dispatch(toggleAudioPlay({ isAudioPlaying: true }))
+        audioTagDOM.play()
       }
     }
   }
@@ -291,16 +328,11 @@ export const AudioPlayer = () => {
               trackId={getTrackInfo().trackId}
               isAudioPlaying={isAudioPlaying}
               onTrackEnd={() => seekPlayerTrack("forward")}
+              onAudioTagStatusChange={() => handlePlayPause()}
             />
           )}
         </div>
       </motion.div>
-      <audio
-        src={""}
-        id="player-audio-tag"
-        style={{ display: "none" }}
-        ref={audioTagRef}
-      />
     </>
   )
 }

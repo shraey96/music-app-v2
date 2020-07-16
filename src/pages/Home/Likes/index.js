@@ -2,11 +2,16 @@ import React, { useState } from "react"
 import { Switch, Route } from "react-router-dom"
 import { TabItems, InputBox } from "components"
 import { SpotifyLikes } from "./Spotify"
+import { SoundcloudLikes } from "./Soundcloud"
 
 const tabItems = [
   {
     label: "Spotify",
     value: "/home/likes/spotify",
+  },
+  {
+    label: "Soundcloud",
+    value: "/home/likes/soundcloud",
   },
   {
     label: "App",
@@ -28,6 +33,9 @@ export const Likes = () => {
         <Switch>
           <Route exact path="/home/likes/spotify">
             <SpotifyLikes searchVal={searchVal} />
+          </Route>
+          <Route exact path="/home/likes/soundcloud">
+            <SoundcloudLikes searchVal={searchVal} />
           </Route>
         </Switch>
       </div>

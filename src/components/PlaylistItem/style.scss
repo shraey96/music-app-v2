@@ -7,6 +7,8 @@
     width: 100%;
     object-fit: cover;
     border-radius: 4px;
+    max-width: 320px;
+    max-height: 320px;
   }
   &__title {
     cursor: pointer;
@@ -17,12 +19,12 @@
     width: 100%;
     height: 100%;
     position: relative;
-    &--with-hover {
-      @include transition();
-      &:hover {
-        transform: scale(1.03) !important;
-      }
-    }
+    // &--with-hover {
+    //   @include transition();
+    //   &:hover {
+    //     transform: scale(1.03) !important;
+    //   }
+    // }
 
     .card-content {
       pointer-events: auto;
@@ -88,7 +90,24 @@
       .playlist-tracks {
         overflow-y: scroll;
         width: 100%;
+        height: 100%;
         margin-top: 40px;
+
+        &__item {
+          color: $text-color;
+          padding: 12px;
+          @include transition();
+          .track-artist {
+            margin-top: 4px;
+            opacity: 0.4;
+          }
+          &:not(:first-child) {
+            margin-top: 8px;
+          }
+          &:hover {
+            background-color: rgba(#000, 0.2);
+          }
+        }
       }
     }
     &--open {
@@ -106,5 +125,30 @@
         background: #1c1c1e;
       }
     }
+  }
+}
+
+// playlist - loader //
+
+.nb-spinner {
+  width: 45px;
+  height: 45px;
+  margin: 0 auto;
+  background: transparent;
+  border-top: 4px solid #009688;
+  border-right: 4px solid transparent;
+  border-radius: 50%;
+  -webkit-animation: 1s spin linear infinite;
+  animation: 1s spin linear infinite;
+}
+
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
