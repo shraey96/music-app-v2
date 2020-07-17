@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react"
 import { useSelector } from "react-redux"
-import { useHistory, Route } from "react-router-dom"
+import { useHistory, useParams, Route } from "react-router-dom"
 
 import {
   SOUNDCLOUD_CLIENT_ID,
@@ -19,6 +19,7 @@ const Callback = React.lazy(() => import("pages/Callback"))
 
 const App = (props) => {
   const history = useHistory()
+
   const [showWelcomeScreen, toggleShowWelcomeScreen] = useState(false)
   const userStore = useSelector((state) => state.user)
   const isUserAuthAndServices = userStore.userInfo.services.length > 0
@@ -29,7 +30,7 @@ const App = (props) => {
       redirect_uri: SOUNDCLOUD_REDIRECT_URL,
     })
 
-    if (isUserAuthAndServices) {
+    if (isUserAuthAndServices && !window.location.href.includes("/callback/")) {
       history.push("/home")
     }
 
@@ -46,8 +47,10 @@ const App = (props) => {
         {showWelcomeScreen ? (
           <WelcomeScreen
             proceed={() => {
-              history.push("/home")
-              toggleShowWelcomeScreen(false)
+              history.push(`/home/likes/${userStore.userInfo.services[0]}`)
+              setTimeout(() => {
+                toggleShowWelcomeScreen(false)
+              }, 300)
             }}
           />
         ) : (

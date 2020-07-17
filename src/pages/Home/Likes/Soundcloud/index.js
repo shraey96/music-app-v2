@@ -9,6 +9,7 @@ export const SoundcloudLikes = ({ searchVal }) => {
   const dispatch = useDispatch()
 
   const soundcloudLikes = useSelector((state) => state.user.soundcloudLikes)
+  const playerState = useSelector((state) => state.player)
   const soundcloudLikesArray = Object.values(
     soundcloudLikes || {}
   ).filter((t) => t.title.toLowerCase().includes(searchVal.toLowerCase()))
@@ -49,6 +50,7 @@ export const SoundcloudLikes = ({ searchVal }) => {
             index={i}
             trackInfo={t}
             playTrack={() => handlePlayTrack(i, t)}
+            playerState={playerState}
           />
         )
       })}

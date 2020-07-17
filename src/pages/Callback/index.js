@@ -5,7 +5,7 @@ import { getQueryParams } from "utils/helpers"
 
 import { getSpotifyToken } from "utils/spotifyHelpers"
 
-const Callback = ({ match, history }) => {
+const Callback = ({ match }) => {
   useEffect(() => {
     const { params } = match
 
@@ -21,7 +21,7 @@ const Callback = ({ match, history }) => {
     if (params.service === "soundcloud") {
       window.setTimeout(window.opener.SC.connectCallback, 2)
     }
-  }, [])
+  })
   return <></>
 }
 

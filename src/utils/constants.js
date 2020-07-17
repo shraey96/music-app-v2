@@ -59,10 +59,12 @@ export const SIDEBAR_ITEMS = {
       {
         label: "Vist Spotify",
         value: "spotify",
+        type: "visit",
       },
       {
         label: "",
-        value: "connect",
+        value: "spotify",
+        type: "connect",
       },
     ],
   },
@@ -72,12 +74,14 @@ export const SIDEBAR_ITEMS = {
     isServiceConnector: true,
     items: [
       {
-        label: "Visit SoundCloud",
+        label: "Vist Soundcloud",
         value: "soundcloud",
+        type: "visit",
       },
       {
         label: "",
-        value: "connect",
+        value: "soundcloud",
+        type: "connect",
       },
     ],
   },

@@ -14,7 +14,7 @@ const tabItems = [
     value: "/home/playlists/soundcloud",
   },
   {
-    label: "App",
+    label: "Combine",
     value: "/home/playlists/app",
   },
 ]

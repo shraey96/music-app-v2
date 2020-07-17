@@ -14,7 +14,7 @@ const tabItems = [
     value: "/home/likes/soundcloud",
   },
   {
-    label: "App",
+    label: "Combine",
     value: "/home/likes/app",
   },
 ]

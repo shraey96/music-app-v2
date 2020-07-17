@@ -1,7 +1,12 @@
 import React from "react"
 import { useSelector } from "react-redux"
+
+import { Button } from "components"
+
 import { loginSoundcloud } from "utils/soundcloudHelpers"
 import { loginSpotify } from "utils/spotifyHelpers"
+
+import { ICONS } from "iconConstants"
 
 import "./style.scss"
 
@@ -50,8 +55,11 @@ export const WelcomeScreen = ({ proceed }) => {
                         className="service-item__connector"
                         onClick={() => handleSerivceLogin(s)}
                       >
-                        connect
+                        Connect
                       </p>
+                    )}
+                    {userServices.includes(s) && (
+                      <span className="service-done-icon">{ICONS.DONE}</span>
                     )}
                   </div>
                 )
@@ -60,7 +68,7 @@ export const WelcomeScreen = ({ proceed }) => {
           </div>
           <div className="success-btn">
             {userServices.length > 0 && (
-              <button onClick={() => proceed && proceed()}> Lets go</button>
+              <Button label="Let's Go!" onClick={() => proceed && proceed()} />
             )}
           </div>
         </div>

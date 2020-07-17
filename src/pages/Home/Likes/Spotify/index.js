@@ -7,10 +7,11 @@ import { playSpotifyTrackComponent } from "utils/spotifyHelpers"
 
 export const SpotifyLikes = ({ searchVal }) => {
   const spotifyLikes = useSelector((state) => state.user.spotifyLikes)
+  const playerState = useSelector((state) => state.player)
   const spotifyLikesArray = Object.values(spotifyLikes || {}).filter((t) =>
     t.name.toLowerCase().includes(searchVal.toLowerCase())
   )
-  // console.log(222, spotifyLikesArray)
+
   const { reqData = [] } = useInfiniteScroll({
     data: spotifyLikesArray,
     searchTerm: searchVal,
@@ -26,8 +27,6 @@ export const SpotifyLikes = ({ searchVal }) => {
     })
   }
 
-  // console.log(111, reqData)
-
   return (
     <>
       {reqData.map((t, i) => {
@@ -37,6 +36,7 @@ export const SpotifyLikes = ({ searchVal }) => {
             index={i}
             trackInfo={t}
             playTrack={() => playTrack(i, t)}
+            playerState={playerState}
           />
         )
       })}

@@ -12,12 +12,12 @@ export const SoundcloudPlaylists = () => {
   const [selectedCard, toggleSelectedCard] = useState(-1)
   const soundcloudPlaylist =
     useSelector((state) => state.user.soundcloudPlaylist) || []
-
+  const playerState = useSelector((state) => state.player)
   const { reqData = [] } = useInfiniteScroll({
     data: soundcloudPlaylist,
   })
 
-  const handlePlayTrack = (index, track, q) => {
+  const handlePlayTrack = (index, track, queue, pId = false) => {
     dispatch(
       playTrack({
         isAudioPlaying: false,
@@ -27,7 +27,8 @@ export const SoundcloudPlaylists = () => {
           trackInfo: track,
         },
         trackIndex: index,
-        playQueue: soundcloudPlaylist,
+        playQueue: queue,
+        playlistId: pId,
       })
     )
   }
@@ -61,7 +62,8 @@ export const SoundcloudPlaylists = () => {
             setSelectedCard={() =>
               toggleSelectedCard(selectedCard === i ? -1 : i)
             }
-            playTrack={(i, t, q) => handlePlayTrack(i, t, q)}
+            playTrack={(i, t, q, pId) => handlePlayTrack(i, t, q, pId)}
+            playerState={playerState}
           />
         )
       })}

@@ -1,10 +1,11 @@
-import React from "react"
+import React, { useState } from "react"
 import { motion } from "framer-motion"
-import { EllipsisScroll } from "components"
+import { EllipsisScroll, Dropdown } from "components"
+import { ICONS } from "iconConstants"
 
 import "./style.scss"
 
-export const TrackItem = ({ trackInfo, playTrack, index }) => {
+export const TrackItem = ({ trackInfo, playTrack, index, playerState }) => {
   const trackType =
     trackInfo.uri && trackInfo.uri.includes("soundcloud")
       ? "soundcloud"
@@ -41,6 +42,35 @@ export const TrackItem = ({ trackInfo, playTrack, index }) => {
         classNames="track-item__title"
         text={trackInfo.name || trackInfo.title}
       />
+      <Dropdown
+        size="small"
+        hideOnMouseOut
+        actions={[
+          {
+            id: "actions",
+            items: [
+              {
+                key: "rLike",
+                label: "Remove from likes",
+              },
+              {
+                key: "cLike",
+                label: "Add to Combine likes",
+              },
+            ],
+          },
+        ]}
+        onClick={(key) => {
+          console.log("key => ", key)
+        }}
+      />
+      <EllipsisScroll classNames="track-item__artists" text={artists} />
+      <span className="track-item__play-icon">
+        {playerState.isAudioPlaying &&
+        playerState.currentTrack.trackId === trackInfo.id
+          ? ICONS.PAUSE
+          : ICONS.PLAY_FILLED}
+      </span>
     </motion.div>
   )
 }

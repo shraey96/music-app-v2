@@ -30,12 +30,71 @@
     border-radius: 4px;
     cursor: pointer;
   }
-  &__title {
+  &__title,
+  &__artists {
     position: absolute;
     cursor: pointer;
     color: $text-color;
     left: 10px;
     top: 10px;
     text-align: left;
+  }
+  &__artists {
+    top: unset;
+    bottom: 10px;
+    left: 10px;
+    opacity: 0;
+    @include transition();
+  }
+  .dropdown {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    opacity: 0;
+    @include transition();
+  }
+  &__play-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    @include transition();
+    svg {
+      height: 60px;
+      width: 60px;
+      border: 1px solid;
+      border-radius: 50%;
+      background: rgba(56, 117, 154, 0.6);
+      path {
+        &:last-child {
+          fill: #a2863e;
+        }
+      }
+    }
+  }
+  &:hover {
+    .dropdown {
+      opacity: 1;
+    }
+    .track-item__artists {
+      animation-name: opactiyAnimation;
+      animation-duration: 0.3s;
+      animation-fill-mode: forwards;
+      animation-timing-function: ease-in-out;
+    }
+    .track-item__play-icon {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+}
+
+@keyframes opactiyAnimation {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
   }
 }

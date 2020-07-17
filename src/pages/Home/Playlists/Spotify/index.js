@@ -11,18 +11,19 @@ export const SpotifyPlaylists = () => {
   const [selectedCard, toggleSelectedCard] = useState(-1)
   const spotifyPlaylists =
     useSelector((state) => state.user.spotifyPlaylists) || []
-
+  const playerState = useSelector((state) => state.player)
   const { reqData = [] } = useInfiniteScroll({
     data: spotifyPlaylists,
   })
 
-  const playTrack = (index, track, queue) => {
+  const playTrack = (index, track, queue, pId = false) => {
     playSpotifyTrackComponent({
       trackIndex: index,
       playQueue: queue,
       trackId: track.id,
       uri: track.uri,
       trackInfo: track,
+      playlistId: pId,
     })
   }
 
@@ -55,7 +56,8 @@ export const SpotifyPlaylists = () => {
             setSelectedCard={() =>
               toggleSelectedCard(selectedCard === i ? -1 : i)
             }
-            playTrack={(i, t, q) => playTrack(i, t, q)}
+            playTrack={(i, t, q, pId) => playTrack(i, t, q, pId)}
+            playerState={playerState}
           />
         )
       })}

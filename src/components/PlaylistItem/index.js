@@ -6,6 +6,8 @@ import { EllipsisScroll } from "components"
 import { getSpotifyPlaylistTracks } from "utils/spotifyHelpers"
 import { getSCPlaylistTracks } from "utils/soundcloudHelpers"
 
+import { ICONS } from "iconConstants"
+
 import "./style.scss"
 
 const openSpring = { type: "spring", stiffness: 200, damping: 30 }
@@ -17,6 +19,7 @@ export const PlaylistItem = ({
   selectedCard,
   setSelectedCard,
   playTrack,
+  playerState,
 }) => {
   const isSelected = index === selectedCard
   const [pallete, setPallete] = useState(null)
@@ -35,12 +38,12 @@ export const PlaylistItem = ({
       setPlaylistTracks(tracks)
     }
 
-    hasFetched(true)
+    toggleHasFetched(true)
     toggleLoading(false)
   }
 
   const handlePlaylistPlay = (index = 0) => {
-    playTrack(index, playlistTracks[index], playlistTracks)
+    playTrack(index, playlistTracks[index], playlistTracks, playlistInfo.id)
   }
 
   useEffect(() => {
@@ -53,7 +56,7 @@ export const PlaylistItem = ({
     Vibrant.from(`https://cryptic-ravine-67258.herokuapp.com/` + imgURL)
       .getPalette()
       .then((pallete) => setPallete(pallete))
-      .catch((err) => setPallete(null))
+      .catch(() => setPallete(null))
   }, [])
 
   useEffect(() => {
@@ -114,12 +117,15 @@ export const PlaylistItem = ({
                     className={`playlist-item__cover`}
                   />
                   {isSelected && playlistTracks.length > 0 && (
-                    <button
+                    <span
                       className="playback-control"
                       onClick={() => handlePlaylistPlay()}
                     >
-                      Play
-                    </button>
+                      {playerState.isAudioPlaying &&
+                      playerState.playlistId === playlistInfo.id
+                        ? ICONS.PAUSE
+                        : ICONS.PLAY_FILLED}
+                    </span>
                   )}
                 </div>
                 {!isSelected && (
@@ -162,6 +168,12 @@ export const PlaylistItem = ({
                           className="playlist-tracks__item"
                           onClick={() => handlePlaylistPlay(k)}
                         >
+                          <span className="playback-control">
+                            {playerState.isAudioPlaying &&
+                            playerState.currentTrack.trackId === p.id
+                              ? ICONS.PAUSE
+                              : ICONS.PLAY_FILLED}
+                          </span>
                           <div className="track-title">{p.name || p.title}</div>
                           <div className="track-artist">{artists}</div>
                         </div>

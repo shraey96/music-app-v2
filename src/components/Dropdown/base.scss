@@ -1,0 +1,148 @@
+/***** fonts *****/
+$base-font: "Circular", Helvetica, sans-serif;
+$icon-font: "icomoon";
+
+/***** widths *****/
+$content-width: calc(100vw - 60px);
+$content-max-width: 1080px;
+$content-large-width: 1280px;
+$content-medium-width: 720px;
+$content-small-width: 540px;
+$content-xsmall-width: 400px;
+
+$navbar-width: 224px;
+$navbar-width-minimized: 64px;
+
+/***** heights *****/
+$header-height: 56px;
+$subheader-height: 48px;
+
+$box-height-small: 32px;
+$box-height-regular: 40px;
+$box-height-large: 48px;
+
+$badge-height-small: 20px;
+$badge-height-regular: 24px;
+$badge-height-large: 32px;
+
+$optimal-content-padding: 32px;
+
+/***** font sizes *****/
+$base-font-size: 16px;
+$caption-font-size: 12px;
+$h1-font-size: 48px;
+$h2-font-size: 36px;
+$h3-font-size: 30px;
+$h4-font-size: 24px;
+$h5-font-size: 20px;
+$h6-font-size: 14px;
+
+/***** colors *****/
+$black: #000;
+$white: #fff;
+$grey: #999;
+$jet-grey: #000033;
+$slate-grey: #666;
+$medium-grey: #ddd;
+$light-grey: #e6e6e6;
+$silver-grey: #f0f0f0;
+$smoke-grey: #f5f5f5;
+$snow-grey: #fafafa;
+$indigo: #0f409f;
+$blue: #1042f0;
+$sky: #238fe5;
+$green: #159570;
+$red: #f63c5d;
+$yellow: #ff9900;
+$orange: #f05f2f;
+
+$colors: (
+  primary: $blue,
+  indigo: $indigo,
+  blue: $blue,
+  sky: $sky,
+  green: $green,
+  red: $red,
+  yellow: $yellow,
+  orange: $orange,
+  black: $black,
+  base: $jet-grey,
+  jet-grey: $jet-grey,
+  slate-grey: $slate-grey,
+  grey: $grey,
+  medium-grey: $medium-grey,
+  light-grey: $light-grey,
+  silver-grey: $silver-grey,
+  smoke-grey: $smoke-grey,
+  snow-grey: $snow-grey,
+  white: $white,
+  info: $blue,
+  warning: $yellow,
+  danger: $red,
+  success: $green,
+);
+
+$base-color: $jet-grey;
+$inverse-color: $white;
+$primary-color: $blue;
+$primary-color-light: mix($blue, $white, 10%);
+$danger-color: $red;
+$danger-color-light: mix($red, $white, 10%);
+$info-color: $sky;
+$info-color-light: mix($sky, $white, 10%);
+$success-color: $green;
+$success-color-light: mix($green, $white, 10%);
+$warning-color: $yellow;
+$warning-color-light: mix($yellow, $white, 10%);
+
+/***** z-index *****/
+$z-index-toast: 50000;
+$z-index-tooltip: 50000;
+$z-index-error: 20000;
+$z-index-loader: 15000;
+$z-index-subheader: 10000;
+$z-index-connection: 8000;
+$z-index-header: 12000;
+$z-index-nav: 11000;
+$z-index-modal: 16000;
+$z-index-alert: 20000;
+$z-index-loader: 9900;
+$z-index-filters: 9900;
+$z-index-select: 9950;
+
+/***** easings *****/
+$easeInQuart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+$easeOutQuart: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+/***** shadows *****/
+$basic-shadow: 0 1px 4px 0 rgba($base-color, 0.08);
+$hover-shadow: 0 10px 20px 0 rgba($base-color, 0.08);
+
+/***** font sizes *****/
+$base-color-shade-01: mix($base-color, $white, 01%);
+$base-color-shade-02: mix($base-color, $white, 02%);
+$base-color-shade-03: mix($base-color, $white, 03%);
+$base-color-shade-05: mix($base-color, $white, 05%);
+$base-color-shade-07: mix($base-color, $white, 07%);
+$base-color-shade-10: mix($base-color, $white, 10%);
+$base-color-shade-20: mix($base-color, $white, 20%);
+$base-color-shade-25: mix($base-color, $white, 25%);
+$base-color-shade-30: mix($base-color, $white, 30%);
+$base-color-shade-40: mix($base-color, $white, 40%);
+$base-color-shade-50: mix($base-color, $white, 50%);
+$base-color-shade-60: mix($base-color, $white, 60%);
+$base-color-shade-70: mix($base-color, $white, 70%);
+
+$form-text-normal: $base-color;
+$form-text-placeholder: $base-color-shade-50;
+$form-text-medium: $base-color-shade-70;
+$form-text-empty: $base-color-shade-50;
+$form-normal: $base-color-shade-10;
+$form-hover: $base-color-shade-30;
+$form-disabled: $base-color-shade-10;
+$form-focus: $primary-color;
+$form-error: $danger-color;
+$form-error-light: $danger-color-light;
+$form-valid: $success-color;
+
+$placeholder-color: rgba(0, 0, 0, 0.2);

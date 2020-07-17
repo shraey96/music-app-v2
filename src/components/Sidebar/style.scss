@@ -15,9 +15,15 @@
     position: fixed;
     bottom: 130px;
   }
-  &--minimized {
-    width: 80px;
-    overflow: hidden;
+
+  .selected-service {
+    position: absolute;
+    top: -34px;
+    left: 26px;
+    cursor: pointer;
+    opacity: 0.6;
+    font-style: italic;
+    @include transition();
   }
   .gradient-box {
     position: absolute;
@@ -108,5 +114,12 @@
     position: fixed;
     bottom: 100px;
     color: lightblue;
+  }
+  &--minimized {
+    width: 80px;
+    overflow: hidden;
+    .selected-service {
+      opacity: 0;
+    }
   }
 }

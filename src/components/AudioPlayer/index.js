@@ -127,23 +127,31 @@ export const AudioPlayer = () => {
       spotifyPlayer.addListener("player_state_changed", (trackState) => {
         console.log(44, trackState, 10101010, playerState)
 
-        if (playerState.currentTrack.service === "spotify") {
+        if (
+          // playerState.currentTrack.service === "spotify"
+          true
+        ) {
           dispatch(toggleAudioPlay({ isAudioPlaying: !trackState.paused }))
           const currentTrack = trackState.track_window.current_track
-          if (prevPlayerTrackId.current !== currentTrack.id) {
+          if (
+            // true
+            prevPlayerTrackId.current !== currentTrack.id
+          ) {
             const trackPayload = {
               service: "spotify",
               trackId: currentTrack.id,
               trackInfo: currentTrack,
             }
-            dispatch(
-              playTrack({
-                isAudioPlaying: false,
-                trackPayload,
-                trackIndex: 0,
-                playQueue: [trackPayload],
-              })
-            )
+            // control from spotify app //
+
+            // dispatch(
+            //   playTrack({
+            //     isAudioPlaying: false,
+            //     trackPayload,
+            //     trackIndex: 0,
+            //     playQueue: [trackPayload],
+            //   })
+            // )
           }
         }
       })
@@ -162,6 +170,7 @@ export const AudioPlayer = () => {
       spotifyPlayer.connect()
 
       spotifyChannel.onmessage = (msg) => {
+        console.log(9999, msg, prevPlayerTrackId.current)
         if (msg.type === "playTrack") {
           if (prevPlayerTrackId.current === msg.trackId) {
             window.spotifyPlayer.togglePlay()
@@ -176,6 +185,7 @@ export const AudioPlayer = () => {
                 },
                 trackIndex: msg.trackIndex,
                 playQueue: msg.playQueue,
+                playlistId: msg.playlistId || false,
               })
             )
           }

@@ -1,10 +1,17 @@
-const playTrack = ({ trackPayload, trackIndex, playQueue, isAudioPlaying }) => {
+const playTrack = ({
+  trackPayload,
+  trackIndex,
+  playQueue,
+  isAudioPlaying,
+  playlistId = false,
+}) => {
   return {
     type: "PLAY_AUDIO",
     trackPayload,
     trackIndex,
     playQueue,
     isAudioPlaying,
+    playlistId,
   }
 }
 

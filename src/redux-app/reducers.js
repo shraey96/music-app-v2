@@ -35,6 +35,7 @@ const playerReducer = (state = playerInitialState, action) => {
         trackIndex: action.trackIndex || 0,
         playQueue: action.playQueue || [],
         playQueueClone: action.playQueue || [],
+        playlistId: action.playlistId,
       }
     case "TOGGLE_AUDIO_PLAY":
       console.log(1111, action)
@@ -117,10 +118,9 @@ const userReducer = (state = userInitialState, action) => {
       }
 
     case "ADD_USER_SERVICE":
-      console.log(222, action)
       const allServices = [...state.userInfo.services, action.service]
       const userInfo = { ...state.userInfo, services: allServices }
-      console.log(userInfo)
+
       localStorageSetter("app_userInfo", JSON.stringify(userInfo))
       return {
         ...state,

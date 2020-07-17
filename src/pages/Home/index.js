@@ -6,12 +6,7 @@ import { AudioPlayer, Sidebar } from "components"
 import { Likes } from "./Likes"
 import { Playlists } from "./Playlists"
 
-import {
-  setSpotifyLikes,
-  setSpotifyPlaylists,
-  setSoundcloudLikes,
-  setSoundcloudPlaylists,
-} from "redux-app/actions"
+import { setSoundcloudLikes, setSoundcloudPlaylists } from "redux-app/actions"
 
 import {
   setSpotifyAccessToken,
@@ -42,21 +37,9 @@ const Home = (props) => {
       if (token) {
         setSpotifyAccessToken(token)
 
-        getSpotifyLikes().then((likes) =>
-          dispatch(
-            setSpotifyLikes({
-              spotifyLikes: likes,
-            })
-          )
-        )
+        getSpotifyLikes({ withDispatch: true })
 
-        getSpotifyPlaylists().then((playlists) => {
-          dispatch(
-            setSpotifyPlaylists({
-              spotifyPlaylists: playlists,
-            })
-          )
-        })
+        getSpotifyPlaylists({ withDispatch: true })
       } else {
         // dispatch error for token
       }
