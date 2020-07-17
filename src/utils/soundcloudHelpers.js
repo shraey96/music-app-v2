@@ -4,13 +4,16 @@ import store from "redux-app/store"
 
 import { addUserMusicService } from "redux-app/actions"
 
-const proxyURL = `https://cryptic-ravine-67258.herokuapp.com/`
-const scToken = `2-291187-136003315-gUg1W5fEs2g6Qr`
+import { getClientInfo } from "./helpers"
 
-const appBase = {}
+const appCreds = getClientInfo("soundcloud")
 
-const SOUNDCLOUD_CLIENT_ID = `AKm0rmaY0ScS4y0FyUdvWMyfmtMdUYh6`
-const SOUNDCLOUD_REDIRECT_URL = `http://localhost:3000/callback/soundcloud`
+const proxyURL = window.location.href.includes("localhost")
+  ? `https://cryptic-ravine-67258.herokuapp.com/`
+  : ""
+
+const SOUNDCLOUD_CLIENT_ID = appCreds.cId
+const SOUNDCLOUD_REDIRECT_URL = appCreds.rU
 
 const APP_BASE_API_ROUTE = `http://localhost:3009/api`
 

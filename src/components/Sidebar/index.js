@@ -5,12 +5,10 @@ import { motion } from "framer-motion"
 
 import { SIDEBAR_ITEMS } from "utils/constants"
 
-import { SPOTIFY_LOGIN_LINK, loginSpotify } from "utils/spotifyHelpers"
+import { loginSpotify } from "utils/spotifyHelpers"
 import { loginSoundcloud } from "utils/soundcloudHelpers"
 
 import { ICONS } from "iconConstants"
-
-import { Button } from "components"
 
 import "./style.scss"
 
@@ -47,7 +45,7 @@ export const Sidebar = () => {
   return (
     <div className={`sidebar ${isMinimized && "sidebar--minimized"}`}>
       <div className="sidebar__items-container">
-        <p className="selected-service">{serviceTitleMaps[selectedTab]}</p>
+        <p className="selected-service">Combine-Music</p>
         <span
           className={`minimize-toggle ${
             isMinimized && "minimize-toggle--minimized"

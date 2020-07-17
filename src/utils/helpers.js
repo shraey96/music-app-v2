@@ -1,3 +1,5 @@
+import { APP_IDS } from "./appIds"
+
 const getHashParams = () => {
   var hashParams = {}
   var e,
@@ -7,6 +9,37 @@ const getHashParams = () => {
     hashParams[e[1]] = decodeURIComponent(e[2])
   }
   return hashParams
+}
+
+const getClientInfo = (service) => {
+  const isNetlify = window.location.href.includes("netlify")
+  if (isNetlify) {
+    if (service === "spotify") {
+      return {
+        cId: APP_IDS.SPOTIFY_NETLIFY_CLIENT_ID,
+        rU: APP_IDS.SPOTIFY_NETLIFY_REDIRECT_URI,
+      }
+    }
+    if (service === "soundcloud") {
+      return {
+        cId: APP_IDS.SOUNDCLOUD_NETLIFY_CLIENT_ID,
+        rU: APP_IDS.SOUNDCLOUD_NETLIFY_REDIRECT_URI,
+      }
+    }
+  } else {
+    if (service === "spotify") {
+      return {
+        cId: APP_IDS.SPOTIFY_LOCAL_CLIENT_ID,
+        rU: APP_IDS.SPOTIFY_LOCAL_REDIRECT_URI,
+      }
+    }
+    if (service === "soundcloud") {
+      return {
+        cId: APP_IDS.SOUNDCLOUD_LOCAL_CLIENT_ID,
+        rU: APP_IDS.SOUNDCLOUD_LOCAL_REDIRECT_URI,
+      }
+    }
+  }
 }
 
 const getQueryParams = (rUrl, p) => {
@@ -70,4 +103,5 @@ export {
   paginateArray,
   formatAudioTime,
   shuffleQueue,
+  getClientInfo,
 }

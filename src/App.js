@@ -11,11 +11,12 @@ import { WelcomeScreen } from "components"
 
 import "./base.scss"
 
-const Login = React.lazy(() => import("pages/Login"))
-
 const Home = React.lazy(() => import("pages/Home"))
 
 const Callback = React.lazy(() => import("pages/Callback"))
+
+// import Home from "pages/Home"
+// import Callback from 'pages/Callback'
 
 const App = (props) => {
   const history = useHistory()
@@ -43,14 +44,15 @@ const App = (props) => {
 
   return (
     <div className="music-app-container">
-      <Suspense fallback={<></>}>
+      <Suspense fallback={<div className="base-loader" />}>
         {showWelcomeScreen ? (
           <WelcomeScreen
             proceed={() => {
-              history.push(`/home/likes/${userStore.userInfo.services[0]}`)
-              setTimeout(() => {
-                toggleShowWelcomeScreen(false)
-              }, 300)
+              // history.push(`/home/likes/${userStore.userInfo.services[0]}`)
+              // setTimeout(() => {
+              //   toggleShowWelcomeScreen(false)
+              // }, 300)
+              window.location.reload()
             }}
           />
         ) : (

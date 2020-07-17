@@ -10,11 +10,15 @@ import {
   setSpotifyPlaylists,
 } from "redux-app/actions"
 
+import { getClientInfo } from "./helpers"
+
+const appCreds = getClientInfo("spotify")
 const spotifyChannel = new BroadcastChannel("SPOTIFY_CHANNEL")
 
-const SPOTIFY_CLIENT_ID = `28bc6211497a4a93a51866c234ed3e40`
+const SPOTIFY_CLIENT_ID = appCreds.cId
+const SPOTIFY_CLIENT_SECRET = `b2bcec9b2d0047b5b83df0d2ee04e688`
 const SPOTIFY_SCOPES = `scope=playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify streaming`
-const SPOTIFY_REDIRECT_URI = `http://localhost:3000/callback/spotify/`
+const SPOTIFY_REDIRECT_URI = appCreds.rU
 const SPOTIFY_LOGIN_LINK = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&${SPOTIFY_SCOPES}&redirect_uri=${SPOTIFY_REDIRECT_URI}`
 
 const spotifyAxios = axios.create()
@@ -35,7 +39,7 @@ const getSpotifyToken = async (code) => {
   params.append("grant_type", "authorization_code")
   params.append("code", code)
   params.append("client_id", SPOTIFY_CLIENT_ID)
-  params.append("client_secret", "b2bcec9b2d0047b5b83df0d2ee04e688")
+  params.append("client_secret", SPOTIFY_CLIENT_SECRET)
   params.append("redirect_uri", SPOTIFY_REDIRECT_URI)
   const response = await axios
     .post(`https://accounts.spotify.com/api/token`, params)
@@ -58,7 +62,7 @@ const getSpotifyRefreshToken = async () => {
   params.append("grant_type", "refresh_token")
   params.append("refresh_token", refresh_token)
   params.append("client_id", SPOTIFY_CLIENT_ID)
-  params.append("client_secret", "b2bcec9b2d0047b5b83df0d2ee04e688")
+  params.append("client_secret", SPOTIFY_CLIENT_SECRET)
 
   const response = await axios
     .post(`https://accounts.spotify.com/api/token`, params)
